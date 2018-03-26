@@ -1,0 +1,19 @@
+<h1>Make a forecast</h1>
+{{#each errors}}
+<div class="alert alert-danger">{{text}}</div>
+{{else}}
+{{/each}}
+<div class="card card-body">
+    <h3>{{forecastTopic.title}}</h3>
+    <form action="/forecasts/{{forecastTopic.id}}?_method=PUT" method="post">
+            <input type="hidden" name="_method" value="PUT">
+        <div class="form-group">
+            <label for="details"> {{forecastTopic.details}} </label>
+        </div>
+        <div class="form-group">
+            <h4>Your probability in percentages (0-100)</h4>
+            <textarea class="form-control" name="submittedProbability" required></textarea>    
+        </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>

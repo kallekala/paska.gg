@@ -1,0 +1,16 @@
+<div class="jumbotron text-center">
+    <h1>Welcome to Forecast App</h1>
+    <a href="/forecasts/add" class= "btn btn-dark btn-lg">Add Forecast</a>
+</div>
+
+{{#each submittedForecasts}}
+    <div class='card card-body mb-2'>
+
+{{title}}
+{{details}}
+{{submittedProbability}}
+    </div>
+    {{else}}
+<p>no forecasts active</p>
+
+{{/each}}

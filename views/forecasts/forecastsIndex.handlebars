@@ -1,0 +1,77 @@
+<h4>Active Topics</h4>
+<h6>These are the active forecast topics submitted by users</h6>
+
+{{#each forecastTopics}}
+    <div class='card card-body mb-2'>
+{{!-- topicit --}}
+        <h4>{{title}}</h4>
+        <p>{{details}}</p>
+
+{{!--  uusi submittedforecast --}}
+        <form action="/forecasts/submitGuess/{{id}}?_method=PUT" method="post">
+            <input type="hidden" name="_method" value="PUT">
+            <div class="input-group mb-3">
+            <input type="hidden" name="title" value={{title}}>
+            <input type="hidden" name="details" value={{details}}>
+                    <input type="text" class="form-control" name="submittedProbability" required placeholder="Add your probability in 0-100 here"></textarea>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-secondary">Update Guess</button>
+                </div>
+            </div>
+        </form>
+
+{{!-- valitse result --}}
+<p><b>Choose Result</b></p>
+        <form action="/forecasts/submitResult/{{id}}?_method=PUT" method="post">
+            <input type="hidden" name="_method" value="PUT">
+            <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="result" required placeholder="Add 1 (true) or 0 (false) once the event is resolved"></textarea>
+                    <input type="hidden" name="title" value={{title}}>
+                    <input type="hidden" name="details" value={{details}}>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-secondary">Submit Final Result</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+{{else}}
+<p>No topics active</p>
+{{/each}}
+<br>
+<h4>Your Active Guesses</h4>
+<h6>Your guesses on unresolved topics. You can update them as often as you want</h6>
+
+
+{{#each submittedForecasts}}
+
+<div class='card card-body mb-2'>
+<b>{{title}}</b>
+{{!-- {{details}} --}}
+   <p>Your probability for "yes": {{submittedProbability}} %</p>
+    </div>
+
+    {{else}}
+<p>No guesses active</p>
+
+{{/each}}
+
+
+<br>
+
+<h4>Finished Topics and Your Results</h4>
+<h6>Topics that have been resolved</h6>
+
+{{#each resolved}}
+    <div class='card card-body mb-2'>
+        <h4>{{title}}</h4>
+        <p>{{details}}</p>
+        <p>Your probability for "yes": {{submittedProbability}} %</p>
+        <p>Final Result: {{result}}</p>        
+        <p>Your Brier Score (0-2, 0=best 2=worst): {{brierScore}}</p>
+
+    </div>
+{{else}}
+<p>No Forecasts Finished</p>
+
+{{/each}}
