@@ -11,8 +11,8 @@
         <form action="/forecasts/submitGuess/{{id}}?_method=PUT" method="post">
             <input type="hidden" name="_method" value="PUT">
             <div class="input-group mb-3">
-            <input type="hidden" name="title" value={{title}}>
-            <input type="hidden" name="details" value={{details}}>
+            <input type="hidden" name="title"  value="{{title}}">
+            <input type="hidden" name="details" value="{{details}}">
                     <input type="text" class="form-control" name="submittedProbability" required placeholder="Add your probability in 0-100 here"></textarea>
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-outline-secondary">Update Guess</button>
@@ -26,8 +26,8 @@
             <input type="hidden" name="_method" value="PUT">
             <div class="input-group mb-3">
                     <input type="text" class="form-control" name="result" required placeholder="Add 1 (true) or 0 (false) once the event is resolved"></textarea>
-                    <input type="hidden" name="title" value={{title}}>
-                    <input type="hidden" name="details" value={{details}}>
+                    <input type="hidden" name="title" value="{{title}}">
+                    <input type="hidden" name="details" value="{{details}}">
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-outline-secondary">Submit Final Result</button>
                 </div>
@@ -35,8 +35,10 @@
         </form>
 
     </div>
+
 {{else}}
 <p>No topics active</p>
+
 {{/each}}
 <br>
 <h4>Your Active Guesses</h4>

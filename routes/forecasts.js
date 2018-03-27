@@ -85,17 +85,23 @@ router.get('/add', ensureAuthenticated, (req, res)=>{
 //submit guess
 router.put('/submitGuess/:id', ensureAuthenticated, (req, res) => {
     // lisää console login tilalle kunnon validation for server side
-        forecastTopic.findById(req.params.id, (err,doc) => {
+    console.log(req.body.title);
+    console.log(req.user.id);
+    console.log(req.body.details);
+    forecastTopic.findById(req.params.id, (err,doc) => {
             if (err) {
                 console.log('kapa')
             } else {
-            const newUser = {
+                console.log(req.body.title);
+                console.log(req.user.id);
+                console.log(req.body.details);
+
+                const newUser = {
                 title: req.body.title,
                 submittedBy: req.user.id,
                 submittedProbability: req.body.submittedProbability,
                 details: req.body.details
             };
-            //hyödynnä newUser-objektia etsimään mongoosella onko collectionissa samalla titlellä olemassa
             submittedForecast.remove({title:newUser.title})
             .then(()=>{
                 new submittedForecast(newUser)
