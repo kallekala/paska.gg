@@ -21,9 +21,12 @@ const User = mongoose.model('users');
 
 //load routes
 const forecasts = require('./routes/forecasts');
-const users = require('./routes/users')
+const users = require('./routes/users');
+const auth = require('./routes/auth');
+
 
 //passport config
+// require('./config/passport')(passport2);
 require('./config/passport')(passport);
 
 //DB config
@@ -88,9 +91,17 @@ app.get('/about', (req, res) => {
     res.render('about');
 });
 
+  // statistics route
+  app.get('/statistics', (req, res)=> {
+    res.render('statistics')
+});
+
+
 //use routes
 app.use('/forecasts', forecasts)
 app.use('/users', users)
+app.use('/auth', auth);
+
 
 const port = process.env.PORT || 3000;
 

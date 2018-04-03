@@ -2,10 +2,13 @@ const LocalStrategy = require('passport-local')
 .Strategy;
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const keys = require('./keys');
 
 //load user model
 const User = mongoose.model('users');
 
+//old stuff
 module.exports = function(passport){
     passport.use(new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
       // Match user
@@ -27,6 +30,19 @@ module.exports = function(passport){
         })
       })
     }));
+
+    passport.use(
+      new GoogleStrategy({
+          clientID: keys.googleClientID,
+          clientSecret: keys.googleClientSecret,
+          callbackURL:'/auth/google/callback',
+          proxy: true
+      }, (accessToken, refreshToken, profile, done)=> {
+          console.log(accessToken);
+          console.log(profile);
+      })
+  )
+
   
     passport.serializeUser(function(user, done) {
       done(null, user.id);
@@ -38,3 +54,18 @@ module.exports = function(passport){
       });
     });
   }
+
+  //new stuff
+//   module.exports = function(passport){
+//     passport.use(
+//         new GoogleStrategy({
+//             clientID: keys.googleClientID,
+//             clientSecret: keys.googleClientSecret,
+//             callbackURL:'/auth/google/callback',
+//             proxy: true
+//         }, (accessToken, refreshToken, profile, done)=> {
+//             console.log(accessToken);
+//             console.log(profile);
+//         })
+//     )
+// }
