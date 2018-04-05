@@ -3,9 +3,24 @@ const Schema = mongoose.Schema;
 
 // create schema
 const UserSchema = new Schema ({
+    googleID: {
+        type:String,
+    },
+    
+    firstName: {
+        type: String
+    },
+
+    lastName: {
+        type: String 
+    },
+
+    image: {
+        type: String 
+    },
+
     name: {
         type: String, 
-        required: true
     }, 
     email: {
         type: String,
@@ -13,8 +28,8 @@ const UserSchema = new Schema ({
     },
     password: {
         type: String,
-        required: true
     },
+
     date: {
         type: Date,
         default: Date.now

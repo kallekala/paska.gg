@@ -8,6 +8,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -23,10 +24,10 @@ const User = mongoose.model('users');
 const forecasts = require('./routes/forecasts');
 const users = require('./routes/users');
 const auth = require('./routes/auth');
+const index = require('./routes/index');
 
 
 //passport config
-// require('./config/passport')(passport2);
 require('./config/passport')(passport);
 
 //DB config
@@ -49,10 +50,17 @@ app.use(methodOverride('_method'))
 // Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
 
+//load keys
+const keys = require('./config/keys');
+
 // connect to mongoose
-mongoose.connect(db.mongoURI)
+// mongoose.connect(db.mongoURI)
+mongoose.connect(keys.mongoURI)
 .then(() => console.log('mongodb connected'))
 .catch((err)=> console.log("kaapukissa"));
+
+//cookieparser
+app.use(cookieParser());
 
 // express-session middleware
 app.use(session({
@@ -79,17 +87,6 @@ app.use(function(req, res, next){
 
 //routes
 
-app.get('/', (req, res) => {
-    submittedForecast.find()
-    .then(submittedForecasts => {
-    res.render('home', {
-    submittedForecasts:submittedForecasts}
-    )});
-});
-
-app.get('/about', (req, res) => {
-    res.render('about');
-});
 
   // statistics route
   app.get('/statistics', (req, res)=> {
@@ -98,8 +95,9 @@ app.get('/about', (req, res) => {
 
 
 //use routes
-app.use('/forecasts', forecasts)
-app.use('/users', users)
+app.use('/', index);
+app.use('/forecasts', forecasts);
+app.use('/users', users);
 app.use('/auth', auth);
 
 

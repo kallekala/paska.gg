@@ -12,4 +12,20 @@ router.get('/google/callback',
   });
 
 
+router.get('/verify', (req, res) => {
+    if(req.user){
+        console.log(req.user)
+    } else {
+        console.log('not auth')
+    }
+})
+
+//logout user
+router.get('/logout', (req, res) => {
+    req.logout();
+    req.flash('success_msg', 'You are logged out');
+    res.redirect('/');
+  });
+
+
 module.exports =router;
