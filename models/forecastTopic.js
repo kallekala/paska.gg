@@ -16,6 +16,11 @@ const forecastTopicSchema = new Schema ({
     },
     categories: [String],
 
+    //resultin voi modaa booleaniksi
+    // allowComments: {
+    //     type: Boolean,
+    //     default:true
+    //   },
     
     result: {
         type: String,

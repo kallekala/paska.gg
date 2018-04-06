@@ -9,6 +9,9 @@ const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
+const moment = require('moment');
+
+
 
 const app = express();
 
@@ -30,12 +33,6 @@ const index = require('./routes/index');
 //passport config
 require('./config/passport')(passport);
 
-//DB config
-const db = require('./config/database');
-
-// handlebars middleware
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-app.set('view engine', 'handlebars');
 
 // body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -52,6 +49,30 @@ mongoose.Promise = global.Promise;
 
 //load keys
 const keys = require('./config/keys');
+  
+
+// Handlebars Helpers
+const {
+    truncate,
+    stripTags,
+    formatDate,
+    select,
+    editIcon
+  } = require('./helpers/hbs');
+  
+  // handlebars middleware
+  app.engine('handlebars', exphbs({
+    helpers: {
+      truncate: truncate,
+      stripTags: stripTags,
+      formatDate:formatDate,
+      select:select,
+      editIcon: editIcon
+    },
+    defaultLayout:'main'
+  }));
+  app.set('view engine', 'handlebars');
+
 
 // connect to mongoose
 // mongoose.connect(db.mongoURI)
@@ -103,10 +124,7 @@ app.use('/auth', auth);
 
 const port = process.env.PORT || 3000;
 
+
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
-
-
-
-

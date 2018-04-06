@@ -1,14 +1,122 @@
 <h4>Active Topics</h4>
 <h6>These are the active forecast topics submitted by users</h6>
 
+
+{{!-- tän divin pitää mennä koko roskan yli jotta menee vierekkäin --}}
+<div class="row">
+
 {{#each forecastTopics}}
-    <div class='card card-body mb-2'>
+
 {{!-- topicit --}}
+
+    <div class="col s4 ">
+      <div class="card panel">
+        <div class="card-content">
+        <h4>{{title }}</h4>
+        <p>{{details }}</p>
+
+{{!-- new submittedforecast --}}
+<div class="row">
+    <form action="/forecasts/submitGuess/{{id}}?_method=PUT" method="post">
+        <input type="hidden" name="title"  value="{{title}}">
+        <input type="hidden" name="details" value="{{details}}">
+        <div class="input-field col s8">
+        <input class="materialize-textarea" type="text" name="submittedProbability">
+        <label for="title">Guess (0-100 %) for "Yes"</label>
+    </div>
+<div class="input-field col s2">
+    <input type="submit" value="Guess" class="btn waves-effect waves-light">
+    </div>
+        </form>
+        </div>
+
+
+
+
+{{!-- choose result --}}
+<div class="row">
+<form action="/forecasts/submitResult/{{id}}?_method=PUT" method="post">
+  <div class="input-field col s8">
+    <input type="hidden" name="title" value="{{title}}">
+    <input type="hidden" name="details" value="{{details}}">
+      
+    <select name="result">
+      <option value="" disabled selected>Undecided</option>
+      <option value="1">True</option>
+      <option value="0">False</option>
+    </select>
+    <label>Choose result post fact</label>
+  </div>
+  <div class="input-field col s2">
+    <input type="submit" value="Submit" class="btn waves-effect waves-light">
+    </div>
+
+        </form>
+        </div>
+
+
+
+    </div>
+    </div>
+    </div>
+
+{{/each}}
+</div>
+<br>
+
+<h4>Your Active Guesses</h4>
+<h6>Your guesses on unresolved topics. You can update them as often as you want</h6>
+
+<div class="row">
+
+{{#each submittedForecasts}}
+    <div class="col s4 ">
+      <div class="card panel">
+        <div class="card-content">
+        <h4>{{title }}</h4>
+        <p>{{details }}</p>
+   <p>Your probability for "Yes": {{submittedProbability}} %</p>
+    </div>
+    </div>
+    </div>
+
+    {{else}}
+<p>No guesses active</p>
+
+{{/each}}
+</div>
+
+
+{{!-- RESOLVED --}}
+<h4>Finished Topics and Your Results</h4>
+<h6>Topics that have been resolved</h6>
+
+<div class="row">
+{{#each resolved}}
+    <div class="col s4 ">
+      <div class="card panel">
+        <div class="card-content">
         <h4>{{title}}</h4>
         <p>{{details}}</p>
+        <p>Your probability for "yes": {{submittedProbability}} %</p>
+        <p>Final Result: {{result}}</p>        
+        <p>Your Brier Score (0=best 2=worst): {{brierScore}}</p>
+    </div>
+    </div>
+
+    </div>
+{{else}}
+<p>No Forecasts Finished</p>
+
+{{/each}}
+</div>
+<img class="logo" src="/img/owl.jpeg">
+
+
+{{!-- OLD VERSION --}}
 
 {{!--  uusi submittedforecast --}}
-        <form action="/forecasts/submitGuess/{{id}}?_method=PUT" method="post">
+        {{!-- <form action="/forecasts/submitGuess/{{id}}?_method=PUT" method="post">
             <input type="hidden" name="_method" value="PUT">
             <div class="input-group mb-3">
             <input type="hidden" name="title"  value="{{title}}">
@@ -18,10 +126,10 @@
                     <button type="submit" class="btn btn-outline-secondary">Update Guess</button>
                 </div>
             </div>
-        </form>
+        </form> --}}
 
 {{!-- valitse result --}}
-<p><b>Choose Result</b></p>
+{{!-- <p><b>Choose Result</b></p>
         <form action="/forecasts/submitResult/{{id}}?_method=PUT" method="post">
             <input type="hidden" name="_method" value="PUT">
             <div class="input-group mb-3">
@@ -33,10 +141,14 @@
                 </div>
             </div>
         </form>
-
     </div>
+  </div>
+      </div>
+        </div>
 
-{{else}}
+    </div> --}}
+
+{{!-- {{else}}
 <p>No topics active</p>
 
 {{/each}}
@@ -48,9 +160,9 @@
 {{#each submittedForecasts}}
 
 <div class='card card-body mb-2'>
-<b>{{title}}</b>
+<b>{{title}}</b> --}}
 {{!-- {{details}} --}}
-   <p>Your probability for "yes": {{submittedProbability}} %</p>
+   {{!-- <p>Your probability for "yes": {{submittedProbability}} %</p>
     </div>
 
     {{else}}
@@ -77,4 +189,4 @@
 <p>No Forecasts Finished</p>
 
 {{/each}}
-<img class="logo" src="/img/owl.jpeg">
+--}}
