@@ -5,7 +5,6 @@
 {{!-- tän divin pitää mennä koko roskan yli jotta menee vierekkäin --}}
 <div class="row">
 
-       <p> {{forecasts}}</p>
 
 {{#each forecastTopics}}
 
@@ -48,27 +47,6 @@
 </div>
 <br>
 
-<h4>Your Active Guesses</h4>
-<h6>Your guesses on unresolved topics. You can update them as often as you want</h6>
-
-<div class="row">
-
-{{#each submittedForecasts}}
-    <div class="col s4 ">
-      <div class="card panel">
-        <div class="card-content">
-        <h5>{{title }}</h5>
-        <p>{{details }}</p>
-   <p>Your probability for "Yes": {{submittedProbability}} %</p>
-    </div>
-    </div>
-    </div>
-
-    {{else}}
-<p>No guesses active</p>
-
-{{/each}}
-</div>
 
 
 {{!-- RESOLVED --}}
