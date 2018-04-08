@@ -24,10 +24,12 @@ router.get('/', ensureAuthenticated, (req, res) => {
                 .then(submittedForecasts => {
                     submittedForecast.find({submittedBy:req.user.id, $or: [{result:"1"},{result:"0"}]})
                     .then(resolved => {
+                        console.log(forecastTopics[0].forecasts[0]);
                         res.render('forecasts/forecastsIndex', {
                         forecastTopics:forecastTopics,
                         submittedForecasts:submittedForecasts,
-                        resolved:resolved
+                        resolved:resolved,
+                        forecasts:forecastTopics[1].forecasts
                         })
                     });
                 })
@@ -84,35 +86,30 @@ router.get('/add', ensureAuthenticated, (req, res)=>{
 
 //submit guess
 router.put('/submitGuess/:id', ensureAuthenticated, (req, res) => {
-    // lisää console login tilalle kunnon validation for server side
-    console.log(req.body.title);
-    console.log(req.user.id);
-    console.log(req.body.details);
-    forecastTopic.findById(req.params.id, (err,doc) => {
-            if (err) {
-                console.log('kapa')
-            } else {
-                console.log(req.body.title);
-                console.log(req.user.id);
-                console.log(req.body.details);
 
-                const newUser = {
-                title: req.body.title,
-                submittedBy: req.user.id,
-                submittedProbability: req.body.submittedProbability,
-                details: req.body.details
-            };
-            submittedForecast.remove({title:newUser.title})
-            .then(()=>{
-                new submittedForecast(newUser)
-                .save()
-                .then(submittedForecast => {
-                    req.flash('success_msg', `Your guess for "${submittedForecast.title}" was updated`);
-                    res.redirect('/forecasts')
-                })
-            })
-        }
-    });    
+    const newGuess = {
+        title: req.body.title,
+        submittedBy: req.user.id,
+        submittedProbability: req.body.submittedProbability,
+        details: req.body.details
+    };
+
+    //save to forecastTopic document
+    forecastTopic.findOne({title:req.body.title})
+        .then((forecastTopic) => {
+            forecastTopic.forecasts.unshift(newGuess);
+            forecastTopic.save()
+        });
+
+    submittedForecast.remove({title:newGuess.title})
+        .then(()=>{
+            new submittedForecast(newGuess)
+            .save()
+            .then(submittedForecast => {
+                req.flash('success_msg', `Your guess for "${submittedForecast.title}" was updated`);
+                res.redirect('/forecasts')
+            });            
+        });
 });
 
 
@@ -120,7 +117,36 @@ router.get('/scoreboard', (req, res)=>{
     res.render('scoreBoard');
 });
 
-//edit forecast topic form process
+// Show Single forecast
+router.get('/show/:id', (req, res) => {
+    forecastTopic.findOne({
+      _id: req.params.id
+    })
+    .then(forecastTopic => {
+        res.render('forecasts/show', {
+            forecastTopic:forecastTopic
+        });
+    })
+});
+
+//edit page
+router.get('/edit/:id', ensureAuthenticated, (req, res) => {
+    forecastTopic.findOne({
+      _id: req.params.id
+    })
+    .then(forecastTopic => {
+      if(forecastTopic.user != req.user.id){
+        res.redirect('/');
+      } else {
+        res.render('forecasts/edit', {
+          forecastTopic: forecastTopic
+        });
+      }
+    });
+  });
+  
+
+//edit forecast topic form process. hmm
 router.put('/:id', ensureAuthenticated, (req, res) => {
     forecastTopic
         .findOne({
@@ -128,6 +154,8 @@ router.put('/:id', ensureAuthenticated, (req, res) => {
     })
         .then(forecastTopic => {
             forecastTopic.submittedProbability = req.body.submittedProbability;
+            forecastTopic.title = req.body.title;
+            forecastTopic.details = req.body.details;
             forecastTopic.save()
                 .then(forecastTopic => {
                     req.flash('success_msg', `Your guess for "${forecastTopic.title}" was updated`);
@@ -166,3 +194,25 @@ router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
 
     });
 });
+
+// Add Comment
+router.post('/comment/:id', (req, res) => {
+    Story.findOne({
+      _id: req.params.id
+    })
+    .then(story => {
+      const newComment = {
+        commentBody: req.body.commentBody,
+        commentUser: req.user.id
+      }
+  
+      // Add to comments array
+      story.comments.unshift(newComment);
+  
+      story.save()
+        .then(story => {
+          res.redirect(`/stories/show/${story.id}`);
+        });
+    });
+  });
+  

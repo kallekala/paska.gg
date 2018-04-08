@@ -5,6 +5,8 @@
 {{!-- tän divin pitää mennä koko roskan yli jotta menee vierekkäin --}}
 <div class="row">
 
+       <p> {{forecasts}}</p>
+
 {{#each forecastTopics}}
 
 {{!-- topicit --}}
@@ -12,8 +14,10 @@
     <div class="col s4 ">
       <div class="card panel">
         <div class="card-content">
-        <h4>{{title }}</h4>
+        <h5>{{title }}</h5>
         <p>{{details }}</p>
+
+
 
 {{!-- new submittedforecast --}}
 <div class="row">
@@ -29,30 +33,10 @@
     </div>
         </form>
         </div>
-
-
-
-
-{{!-- choose result --}}
-<div class="row">
-<form action="/forecasts/submitResult/{{id}}?_method=PUT" method="post">
-  <div class="input-field col s8">
-    <input type="hidden" name="title" value="{{title}}">
-    <input type="hidden" name="details" value="{{details}}">
-      
-    <select name="result">
-      <option value="" disabled selected>Undecided</option>
-      <option value="1">True</option>
-      <option value="0">False</option>
-    </select>
-    <label>Choose result post fact</label>
-  </div>
-  <div class="input-field col s2">
-    <input type="submit" value="Submit" class="btn waves-effect waves-light">
+        <p>Your current guess: {{forecasts.0.submittedProbability}} %</p>
+    <div class="card-action center-align">
+        <a class="btn grey" href="/forecasts/show/{{id}}">Read More</a>
     </div>
-
-        </form>
-        </div>
 
 
 
@@ -73,7 +57,7 @@
     <div class="col s4 ">
       <div class="card panel">
         <div class="card-content">
-        <h4>{{title }}</h4>
+        <h5>{{title }}</h5>
         <p>{{details }}</p>
    <p>Your probability for "Yes": {{submittedProbability}} %</p>
     </div>
@@ -96,7 +80,7 @@
     <div class="col s4 ">
       <div class="card panel">
         <div class="card-content">
-        <h4>{{title}}</h4>
+        <h5>{{title }}</h5>
         <p>{{details}}</p>
         <p>Your probability for "yes": {{submittedProbability}} %</p>
         <p>Final Result: {{result}}</p>        
@@ -153,7 +137,7 @@
 
 {{/each}}
 <br>
-<h4>Your Active Guesses</h4>
+<h6>Your Active Guesses</h6>
 <h6>Your guesses on unresolved topics. You can update them as often as you want</h6>
 
 
@@ -173,12 +157,12 @@
 
 <br>
 
-<h4>Finished Topics and Your Results</h4>
+<h6>Finished Topics and Your Results</h6>
 <h6>Topics that have been resolved</h6>
 
 {{#each resolved}}
     <div class='card card-body mb-2'>
-        <h4>{{title}}</h4>
+        <h6>{{title}}</h6>
         <p>{{details}}</p>
         <p>Your probability for "yes": {{submittedProbability}} %</p>
         <p>Final Result: {{result}}</p>        

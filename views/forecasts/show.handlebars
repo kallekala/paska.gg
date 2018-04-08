@@ -1,1 +1,109 @@
-<h1>Show Forecast</h1>
+<div class="row">
+  <div class="col s12 m8">
+    <h3>{{forecastTopic.title}}
+      <small>{{{editIcon forecastTopic.user user.id forecastTopic.id false}}}</small>
+    </h3>
+    <div class="card story">
+      <div class="card-content">
+        <span class="card-title">{{formatDate forecastTopic.date 'MMMM Do YYYY'}}</span>
+        {{{forecastTopic.details}}}
+      </div>
+    </div>
+
+
+      <div class="card">
+        <div class="card-content">
+
+{{!-- new submittedforecast --}}
+        <p>Your current guess for "Yes": {{forecastTopic.forecasts.0.submittedProbability}} %</p>
+        <p>You can modify your guess as often as you want until the topic is resolved</p>
+
+
+<div class="row">
+    <form action="/forecasts/submitGuess/{{forecastTopic.id}}?_method=PUT" method="post">
+        <input type="hidden" name="title"  value="{{forecastTopic.title}}">
+        <input type="hidden" name="details" value="{{forecastTopic.details}}">
+        <div class="input-field">
+        <input class="materialize-textarea" type="text" name="submittedProbability">
+        <label for="title">To modify your guess insert 0-100</label>
+    </div>
+<div class="input-field col">
+    <input type="submit" value="Submit Guess" class="btn waves-effect waves-light">
+    </div>
+        </form>
+        </div>
+
+
+{{!-- comments --}}
+<br>
+          <span class="card-title">Comments</span>
+          {{#if user}}
+            <form method="post" action="/forecasts/comment/{{forecastTopic.id}}">
+              <div class="input-field">
+                <textarea name="commentBody" class="materialize-textarea"></textarea>
+                <label> Add Comment</label>
+              </div>
+              <input type="submit" value="Submit Comment" class="btn">
+            </form>
+          {{else}}
+            <p>Please <a href="/auth/google">log</a> in to leave a comment</p>
+          {{/if}}
+
+      {{#each forecastTopic.comments}}
+        <div class="card">
+          <div class="card-content">
+            <h5>{{commentBody}}</h5>
+            <div class="chip">
+              <img src="{{commentUser.image}}">
+              <a href="/forecasts/user/{{commentUser.id}}">
+              {{commentUser.firstName}} {{commentUser.lastName}}
+              </a>
+            </div>
+            <br>
+            <small>Posted: {{formatDate commentDate 'MMMM Do YYYY'}}</small>
+          </div>
+        </div>
+      {{/each}}
+
+
+{{!-- choose result --}}
+<br>
+<div class="row">
+<form action="/forecasts/submitResult/{{id}}?_method=PUT" method="post">
+  <div class="input-field col s8">
+    <input type="hidden" name="title" value="{{title}}">
+    <input type="hidden" name="details" value="{{details}}">
+      
+    <select name="result">
+      <option value="" disabled selected>Undecided</option>
+      <option value="1">True</option>
+      <option value="0">False</option>
+    </select>
+    <label>Choose result once the event is resolved</label>
+  </div>
+  <div class="input-field col s2">
+    <input type="submit" value="Submit Result" class="btn waves-effect waves-light">
+    </div>
+
+        </form>
+        </div>
+
+        </div>
+      </div>
+
+
+
+  </div>
+  <div class="col s12 m4">
+    <div class="card center-align">
+      <div class="card-content">
+        <span class="card-title">{{forecastTopic.user.firstName}} {{forecastTopic.user.lastName}}</span>
+        <img src="{{forecastTopic.user.image}}" class="circle responsive-img">
+      </div>
+      <div class="card-action">
+        <a href="/forecasts/user/{{forecastTopic.user.id}}">More From {{forecastTopic.user.firstName}}</a>
+      </div>
+    </div>
+  </div>
+</div>
+

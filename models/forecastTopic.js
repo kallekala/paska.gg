@@ -14,7 +14,8 @@ const forecastTopicSchema = new Schema ({
     submittedBy: {
         type: String,
     },
-    categories: [String],
+
+    // categories: [String],
 
     //resultin voi modaa booleaniksi
     // allowComments: {
@@ -27,14 +28,43 @@ const forecastTopicSchema = new Schema ({
         default: "Unresolved"
     },
 
-    user:{
-        type: String,
-        required:true
-      },
+forecasts: [{
+    submittedBy: {
+        type: String  
+    },
+    submittedProbability: {
+        type:Number, 
+        min: 0, 
+        max: 100,
+        default: 0
+    },
     date: {
         type: Date,
         default: Date.now
     }
+}],
+
+user:{
+    type: Schema.Types.ObjectId,
+    ref:'users'
+  },
+    
+
+comments: [{
+    commentBody: {
+      type: String,
+      required: true
+    },
+    commentDate:{
+      type: Date,
+      default: Date.now
+    },
+    commentUser:{
+      type: Schema.Types.ObjectId,
+      ref:'users'
+    }
+  }]
+
 });
 
 //luo model. eka argumentti toimii myös collectionin nimenä mihin tulee menemään
