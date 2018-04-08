@@ -43,11 +43,9 @@ router.post('/', ensureAuthenticated, (req, res) => {
     // validation for server side
     let errors = [];
     if (!req.body.title) {
-        errors.push({text: 'pls'})
+        errors.push({text: 'pls add title'})
     };
-    if (!req.body.details) {
-        errors.push({text: 'pls'})
-    };
+
     forecastTopic.find({title:req.body.title})
         .then(titleProposal => {
             console.log(titleProposal);
@@ -122,6 +120,9 @@ router.get('/show/:id', (req, res) => {
     forecastTopic.findOne({
       _id: req.params.id
     })
+    .populate('user')
+    .populate('comments.commentUser')
+  
     .then(forecastTopic => {
         res.render('forecasts/show', {
             forecastTopic:forecastTopic
@@ -197,21 +198,22 @@ router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
 
 // Add Comment
 router.post('/comment/:id', (req, res) => {
-    Story.findOne({
+    forecastTopic.findOne({
       _id: req.params.id
     })
-    .then(story => {
+    .then(forecastTopic => {
+
       const newComment = {
         commentBody: req.body.commentBody,
         commentUser: req.user.id
       }
   
       // Add to comments array
-      story.comments.unshift(newComment);
+      forecastTopic.comments.unshift(newComment);
   
-      story.save()
-        .then(story => {
-          res.redirect(`/stories/show/${story.id}`);
+      forecastTopic.save()
+        .then(forecastTopic => {
+          res.redirect(`/forecasts/show/${forecastTopic.id}`);
         });
     });
   });

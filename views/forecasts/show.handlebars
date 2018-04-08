@@ -32,11 +32,30 @@
     </div>
         </form>
         </div>
-
-
-{{!-- comments --}}
 <br>
+
+
+{{!-- COMMENTS --}}
           <span class="card-title">Comments</span>
+
+{{!-- list comments --}}
+      {{#each forecastTopic.comments}}
+        <div class="card">
+          <div class="card-content">
+            <h5>{{commentBody}}</h5>
+            <div class="chip">
+              <img src="{{commentUser.image}}">
+              <a href="/forecasts/user/{{commentUser.id}}">
+              <h5>{{commentUser.firstName}} {{commentUser.lastName}}</h5>
+              </a>
+            </div>
+            <br>
+            <small>Posted: {{formatDate commentDate 'MMMM Do YYYY'}}</small>
+          </div>
+        </div>
+      {{/each}}
+
+{{!-- add new comment --}}
           {{#if user}}
             <form method="post" action="/forecasts/comment/{{forecastTopic.id}}">
               <div class="input-field">
@@ -48,22 +67,6 @@
           {{else}}
             <p>Please <a href="/auth/google">log</a> in to leave a comment</p>
           {{/if}}
-
-      {{#each forecastTopic.comments}}
-        <div class="card">
-          <div class="card-content">
-            <h5>{{commentBody}}</h5>
-            <div class="chip">
-              <img src="{{commentUser.image}}">
-              <a href="/forecasts/user/{{commentUser.id}}">
-              {{commentUser.firstName}} {{commentUser.lastName}}
-              </a>
-            </div>
-            <br>
-            <small>Posted: {{formatDate commentDate 'MMMM Do YYYY'}}</small>
-          </div>
-        </div>
-      {{/each}}
 
 
 {{!-- choose result --}}
