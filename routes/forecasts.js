@@ -24,17 +24,14 @@ router.get('/', ensureAuthenticated, (req, res) => {
                 .then(submittedForecasts => {
                     submittedForecast.find({submittedBy:req.user.id, $or: [{result:"1"},{result:"0"}]})
                     .then(resolved => {
-                        console.log(forecastTopics[0].forecasts[0]);
                         res.render('forecasts/forecastsIndex', {
                         forecastTopics:forecastTopics,
                         submittedForecasts:submittedForecasts,
                         resolved:resolved,
-                        forecasts:forecastTopics[1].forecasts
                         })
                     });
                 })
         })
-
 });
 
 
@@ -147,6 +144,45 @@ router.get('/edit/:id', ensureAuthenticated, (req, res) => {
   });
   
 
+
+//submit result 
+router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
+    console.log("t''llä")
+    forecastTopic
+        .findOne({
+        _id: req.params.id
+        })
+        .then(forecastTopic => {
+            forecastTopic.result = req.body.result;
+            console.log("seivattu topic")
+            forecastTopic.save();
+        });
+       
+    submittedForecast.find({title:req.body.title}).then(submittedForecast => {
+        console.log(`titteli: ${req.body.title}`)
+        console.log("ässä ennen ifia")
+        console.log(submittedForecast.length)
+        for (i = 0; i < submittedForecast.length; i++) { 
+        if (req.body.result==="1"){
+            console.log("totuus")
+            submittedForecast[i].result=1;
+            submittedForecast[i].brierScore= Math.pow((1-submittedForecast[i].submittedProbability/100), 2)*2;
+            submittedForecast[i].save();
+        }
+        else {
+            console.log("epätotuus")
+            submittedForecast[i].result=0;
+            submittedForecast[i].brierScore=Math.pow((0-submittedForecast[i].submittedProbability/100), 2)*2;
+            submittedForecast[i].save();
+        }
+        };
+        req.flash('success_msg', `The outcome for "${req.body.title}" was submitted and the topic was archived`);
+        console.log("mennään")
+        res.redirect('/forecasts');
+
+    });
+});
+
 //edit forecast topic form process. hmm
 router.put('/:id', ensureAuthenticated, (req, res) => {
     forecastTopic
@@ -163,37 +199,6 @@ router.put('/:id', ensureAuthenticated, (req, res) => {
                     res.redirect('/forecasts');
                 })
         })
-});
-
-//submit result 
-router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
-    forecastTopic
-        .findOne({
-        _id: req.params.id
-        })
-        .then(forecastTopic => {
-            forecastTopic.result = req.body.result;
-            forecastTopic.save();
-        });
-       
-    submittedForecast.find({title:req.body.title}).then(submittedForecast => {
-
-        for (i = 0; i < submittedForecast.length; i++) { 
-        if (req.body.result==="1"){
-            submittedForecast[i].result=1;
-            submittedForecast[i].brierScore= Math.pow((1-submittedForecast[i].submittedProbability/100), 2)*2;
-            submittedForecast[i].save();
-        }
-        else {
-            submittedForecast[i].result=0;
-            submittedForecast[i].brierScore=Math.pow((0-submittedForecast[i].submittedProbability/100), 2)*2;
-            submittedForecast[i].save();
-        }
-        };
-        req.flash('success_msg', `The outcome for "${req.body.title}" was submitted and the topic was archived`);
-        res.redirect('/forecasts');
-
-    });
 });
 
 // Add Comment
@@ -218,3 +223,11 @@ router.post('/comment/:id', (req, res) => {
     });
   });
   
+  //delete topic
+  router.get('/edit/delete/:id', (req, res) => {
+      forecastTopic.remove({_id: req.params.id})
+        .then(() => {
+            req.flash('success_msg', 'Topic deleted');
+            res.redirect('/forecasts');            
+        });
+});

@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col s12 m8">
     <h3>{{forecastTopic.title}}
-      <small>{{{editIcon forecastTopic.user user.id forecastTopic.id false}}}</small>
+      <small>{{{editIcon forecastTopic.user._id user.id forecastTopic.id false}}}</small>
     </h3>
     <div class="card story">
       <div class="card-content">
@@ -72,10 +72,13 @@
 {{!-- choose result --}}
 <br>
 <div class="row">
-<form action="/forecasts/submitResult/{{id}}?_method=PUT" method="post">
+<form action="/forecasts/submitResult/{{forecastTopic.id}}?_method=PUT" method="post">
+<input type="hidden" name="_method" value="PUT">
+
   <div class="input-field col s8">
-    <input type="hidden" name="title" value="{{title}}">
-    <input type="hidden" name="details" value="{{details}}">
+
+    <input type="hidden" name="title" value="{{forecastTopic.title}}">
+    <input type="hidden" name="details" value="{{forecastTopic.details}}">
       
     <select name="result">
       <option value="" disabled selected>Undecided</option>
@@ -96,7 +99,7 @@
 
 
 
-  </div>
+  {{!-- </div>
   <div class="col s12 m4">
     <div class="card center-align">
       <div class="card-content">
@@ -108,5 +111,5 @@
       </div>
     </div>
   </div>
-</div>
+</div> --}}
 

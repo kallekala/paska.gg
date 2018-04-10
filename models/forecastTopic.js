@@ -48,7 +48,6 @@ user:{
     type: Schema.Types.ObjectId,
     ref:'users'
   },
-    
 
 comments: [{
     commentBody: {

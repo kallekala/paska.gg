@@ -86,4 +86,11 @@ router.post('/register', (req, res)=>{
     }
 });
 
-  
+  //delete forecastTopic
+router.delete('/:id', (req, res) => {
+    forecastTopic.remove({_id: req.params.id})
+        .then(() => {
+            req.flash('success_msg', 'Topic removed');
+            res.redirect('/forecasts');            
+        });
+});

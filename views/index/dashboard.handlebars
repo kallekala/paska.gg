@@ -1,2 +1,39 @@
-<h1>Welcome {{user.firstName}}</h1>
+<h1><img class="logo" src="/img/owl.jpeg">Welcome {{user.firstName}} </h1>
+
 <h4>Your Forecasts</h4>
+{{#if forecasts}}
+  <table class="striped">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Your Guess</th>
+        <th>Result</th>
+        <th>Your Brier Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each forecasts}}
+        <tr>
+            {{!-- poistan linkin toistaiseksi koska pitää olla erilainen sivu kun ratkaistu
+          <td><a href="/forecasts/show/{{id}}">{{title}}</a></td> --}}
+          <td>{{title}}</td>
+          <td>{{submittedProbability}} %</td>
+          <td>{{result}}</td>
+          <td>{{brierScore}}</td>
+          {{!-- <td>{{formatDate data 'MMMM do YYYY'}}</td> --}}
+          {{!-- <td><span class="dash-status">{{submitted}}</span></td> --}}
+          {{!-- <td>
+            <a class="btn left-align" href="/stories/edit/{{id}}"><i class="fa fa-pencil"></i> Edit</a>
+            <form action="/stories/{{id}}?_method=DELETE" method="post" id="delete-form">
+              <input type="hidden" name="_method" value="DELETE">
+              <button type="submit" class="btn red"><i class="fa fa-remove"></i> Delete</button>
+            </form>
+          </td> --}}
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <p>You don't have resoved topics yet</p>
+{{/if}}
+

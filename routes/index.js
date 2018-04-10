@@ -16,9 +16,16 @@ router.get('/', (req, res) => {
     res.render('index/welcome');
   });
   
-router.get('/dashboard', (req, res) => {
-    res.render('Dashboard');
+router.get('/dashboard', ensureAuthenticated, (req, res) => {
+  submittedForecast
+  .find({submittedBy:req.user.id})
+    .then((forecasts) =>{
+      console.log(req.user.id)
+      res.render('index/dashboard',{
+        forecasts:forecasts});
   });
+});
+
 
   router.get('/about', (req, res) => {
     res.render('index/about');
