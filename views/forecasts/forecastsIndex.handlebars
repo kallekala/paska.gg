@@ -4,12 +4,13 @@
 
 {{!-- tän divin pitää mennä koko roskan yli jotta menee vierekkäin --}}
 <div class="row">
-
+<div class="grid js-masonry"
+  data-masonry-options='{ "itemSelector": ".grid-item", "columnWidth": 10 }'>
 
 {{#each forecastTopics}}
 
 {{!-- topicit --}}
-
+<div class="grid-item"
 <div class="col s3">
     <div class="card panel">
         <div class="card-content">
@@ -38,8 +39,9 @@
     </div>
     {{else}}
 <p>No Active Forecast Topics</p>
-
+></div>
 {{/each}}
+</div>
 </div>
 <br>
 

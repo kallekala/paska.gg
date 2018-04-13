@@ -32,3 +32,7 @@ footer{
 #delete-form{
   display:inline;
 }
+
+.grid-item {
+  margin: 10px;
+}
