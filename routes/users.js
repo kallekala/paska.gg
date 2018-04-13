@@ -9,8 +9,6 @@ module.exports = router;
 // load models
 require('../models/forecastTopic');
 const forecastTopic = mongoose.model('forecastTopics');
-require('../models/submittedForecast');
-const submittedForecast = mongoose.model('submittedForecasts');
 require('../models/user');
 const User = mongoose.model('users');
 

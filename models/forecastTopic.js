@@ -28,26 +28,33 @@ const forecastTopicSchema = new Schema ({
         default: "Unresolved"
     },
 
-forecasts: [{
-    submittedBy: {
-        type: String  
-    },
-    submittedProbability: {
-        type:Number, 
-        min: 0, 
-        max: 100,
-        default: 0
-    },
-    date: {
-        type: Date,
-        default: Date.now
-    }
-}],
 
 user:{
     type: Schema.Types.ObjectId,
     ref:'users'
   },
+
+submits: [
+{
+    user:{
+        type: Schema.Types.ObjectId,
+        ref:'users'    
+    },
+    
+    submittedProbability:{
+        type:Number, min: 0, max: 100,
+    },
+
+    brierScore: {
+        type: String,
+        default: "Unresolved"
+    },
+
+    date: {
+        type: Date,
+        default: Date.now
+    }
+}],
 
 comments: [{
     commentBody: {

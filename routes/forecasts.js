@@ -8,44 +8,49 @@ module.exports = router;
 // load models
 require('../models/forecastTopic');
 const forecastTopic = mongoose.model('forecastTopics');
-require('../models/submittedForecast');
-const submittedForecast = mongoose.model('submittedForecasts');
 require('../models/user');
 const User = mongoose.model('users');
 
-// forecast perussivu {user:req.user.id}
+// forecast perussivu {user:req.user.id} 
+    //challenge is to filter out submits that are not from user
 router.get('/', ensureAuthenticated, (req, res) => {
-    
     forecastTopic.find({result:"Unresolved"})
-    .sort({date:'desc'})
-
-        .then(forecastTopics => {
-            submittedForecast.find({submittedBy:req.user.id, result:"Unresolved"})
-                .then(submittedForecasts => {
-                    submittedForecast.find({submittedBy:req.user.id, $or: [{result:"1"},{result:"0"}]})
-                    .then(resolved => {
-                        res.render('forecasts/forecastsIndex', {
-                        forecastTopics:forecastTopics,
-                        submittedForecasts:submittedForecasts,
-                        resolved:resolved,
-                        })
-                    });
+        .populate('submits.user')
+        .sort({date:'desc'})
+            .then((forecastTopics) => {
+                loggedUser = req.user._id;
+                for (i = 0; i<forecastTopics.length; i++) {
+                    var loggedUserSubmits = [];
+                    var subArray = forecastTopics[i].submits;
+                    var tama = forecastTopics[i]
+                        if(subArray.length>0){
+                            for(i = 0; i<subArray.length; i++){
+                                //laitan stringeiksi koska muuten type on jostain syystä objekti jolloin ei toimi ifissä
+                                var nokka = String(req.user._id)
+                                var pokka = String(subArray[i].user._id) 
+                                        if(nokka===pokka) {
+                                            loggedUserSubmits.push(subArray[i]);
+                                        } 
+                            }
+                        }
+                    tama.submits = loggedUserSubmits
+                };
+                res.render('forecasts/forecastsIndex', {
+                forecastTopics:forecastTopics,
                 })
-        })
+            });
 });
-
 
 //add new
 router.post('/', ensureAuthenticated, (req, res) => {
     // validation for server side
     let errors = [];
     if (!req.body.title) {
-        errors.push({text: 'pls add title'})
+        errors.push({text: 'Please add title'})
     };
 
     forecastTopic.find({title:req.body.title})
         .then(titleProposal => {
-            console.log(titleProposal);
             if(titleProposal.length>0){
             errors.push({text: 'This title already exists'})
             };
@@ -85,32 +90,37 @@ router.put('/submitGuess/:id', ensureAuthenticated, (req, res) => {
     const newGuess = {
         title: req.body.title,
         submittedBy: req.user.id,
+        user: req.user.id,
         submittedProbability: req.body.submittedProbability,
-        details: req.body.details
+        details: req.body.details,
     };
+
+    let errors = [];
+
+    if(req.body.submittedProbability<0 || req.body.submittedProbability>100 || typeof req.body.submittedProbability!==Number) {
+        errors.push("Please enter a value between 0 and 100");
+    }
+
+    if(errors.length>0) {
+        req.flash('error_msg', `Error: ${errors}`);
+        res.redirect('/forecasts')
+    }
 
     //save to forecastTopic document
     forecastTopic.findOne({title:req.body.title})
         .then((forecastTopic) => {
-            forecastTopic.forecasts.unshift(newGuess);
+            forecastTopic.submits.unshift(newGuess);
             forecastTopic.save()
-        });
-
-    submittedForecast.remove({title:newGuess.title})
-        .then(()=>{
-            new submittedForecast(newGuess)
-            .save()
-            .then(submittedForecast => {
-                req.flash('success_msg', `Your guess for "${submittedForecast.title}" was updated`);
+                req.flash('success_msg', `Your guess for "${forecastTopic.title}" was updated`);
                 res.redirect('/forecasts')
             });            
         });
-});
 
 
 router.get('/scoreboard', (req, res)=>{
     res.render('scoreBoard');
 });
+
 
 // Show Single forecast
 router.get('/show/:id', (req, res) => {
@@ -119,10 +129,19 @@ router.get('/show/:id', (req, res) => {
     })
     .populate('user')
     .populate('comments.commentUser')
-  
+    .populate('submits.user')
     .then(forecastTopic => {
+        var omat = [];
+        for (i = 0; i<forecastTopic.submits.length; i++) { 
+            if(forecastTopic.submits[i].user._id==req.user.id) {
+                omat.push(forecastTopic.submits[i]);
+
+            }
+        }
+        forecastTopic.submits = omat;
+
         res.render('forecasts/show', {
-            forecastTopic:forecastTopic
+            forecastTopic:forecastTopic,
         });
     })
 });
@@ -147,41 +166,29 @@ router.get('/edit/:id', ensureAuthenticated, (req, res) => {
 
 //submit result 
 router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
-    console.log("t''llä")
     forecastTopic
         .findOne({
         _id: req.params.id
         })
         .then(forecastTopic => {
-            forecastTopic.result = req.body.result;
-            console.log("seivattu topic")
+
+            var result = req.body.result;
+            forecastTopic.result = result;
+            
+            for (i = 0; i < forecastTopic.submits.length; i++)
+                if(result=="True"){
+                    forecastTopic.submits[i].brierScore= Math.pow((1-forecastTopic.submits[i].submittedProbability/100), 2)*2;
+                    forecastTopic.save();    
+                } else if(result=="False"){
+                    forecastTopic.submits[i].brierScore=Math.pow((0-forecastTopic.submits[i].submittedProbability/100), 2)*2;
+                    forecastTopic.save();    
+                };
+
             forecastTopic.save();
         });
-       
-    submittedForecast.find({title:req.body.title}).then(submittedForecast => {
-        console.log(`titteli: ${req.body.title}`)
-        console.log("ässä ennen ifia")
-        console.log(submittedForecast.length)
-        for (i = 0; i < submittedForecast.length; i++) { 
-        if (req.body.result==="1"){
-            console.log("totuus")
-            submittedForecast[i].result=1;
-            submittedForecast[i].brierScore= Math.pow((1-submittedForecast[i].submittedProbability/100), 2)*2;
-            submittedForecast[i].save();
-        }
-        else {
-            console.log("epätotuus")
-            submittedForecast[i].result=0;
-            submittedForecast[i].brierScore=Math.pow((0-submittedForecast[i].submittedProbability/100), 2)*2;
-            submittedForecast[i].save();
-        }
-        };
-        req.flash('success_msg', `The outcome for "${req.body.title}" was submitted and the topic was archived`);
-        console.log("mennään")
+               req.flash('success_msg', `The outcome for "${req.body.title}" was submitted and the topic was archived`);
         res.redirect('/forecasts');
-
     });
-});
 
 //edit forecast topic form process. hmm
 router.put('/:id', ensureAuthenticated, (req, res) => {

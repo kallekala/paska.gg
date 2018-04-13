@@ -14,8 +14,8 @@
       <div class="card">
         <div class="card-content">
 
-{{!-- new submittedforecast --}}
-        <p>Your current guess for "Yes": {{forecastTopic.forecasts.0.submittedProbability}} %</p>
+{{!-- new guess --}}
+        <p>Your current guess for "Yes": {{forecastTopic.submits.0.submittedProbability}} %</p>
         <p>You can modify your guess as often as you want until the topic is resolved</p>
 
 
@@ -33,7 +33,6 @@
         </form>
         </div>
 <br>
-
 
 {{!-- COMMENTS --}}
           <span class="card-title">Comments</span>
@@ -82,8 +81,8 @@
       
     <select name="result">
       <option value="" disabled selected>Undecided</option>
-      <option value="1">True</option>
-      <option value="0">False</option>
+      <option value="True">True</option>
+      <option value="False">False</option>
     </select>
     <label>Choose result once the event is resolved</label>
   </div>
