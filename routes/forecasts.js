@@ -87,6 +87,8 @@ router.get('/add', ensureAuthenticated, (req, res)=>{
 //submit guess
 router.put('/submitGuess/:id', ensureAuthenticated, (req, res) => {
 
+console.log(typeof req.body.submittedProbability);
+
     const newGuess = {
         title: req.body.title,
         submittedBy: req.user.id,
@@ -97,7 +99,8 @@ router.put('/submitGuess/:id', ensureAuthenticated, (req, res) => {
 
     let errors = [];
 
-    if(req.body.submittedProbability<0 || req.body.submittedProbability>100 || typeof req.body.submittedProbability!==Number) {
+    if(req.body.submittedProbability<0 || req.body.submittedProbability>100) {
+        console.log(typeof req.body.submittedProbability);
         errors.push("Please enter a value between 0 and 100");
     }
 
