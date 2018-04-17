@@ -1,6 +1,32 @@
-<h1><img class="logo" src="/img/owl.jpeg">Welcome {{user.firstName}} </h1>
+<h1><img class="logo" src="/img/owl.jpeg">Dashboard </h1>
 
-<h4>Your Forecasts</h4>
+<h4>Aggregate Scores</h4>
+
+{{#if forecasts}}
+  <table class="striped">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Number of Resolved Topics</th>
+        <th>Average Brier Score</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>{{user.firstName}} {{user.lastName}}</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Other Users</td>
+          <td></td>
+          <td></td>
+        </tr>
+    </tbody>
+  </table>
+{{/if}}
+
+<h4>Your Results for Resolved Topics</h4>
 {{#if forecasts}}
   <table class="striped">
     <thead>
@@ -18,7 +44,7 @@
           <td><a href="/forecasts/show/{{id}}">{{title}}</a></td> --}}
           <td>{{title}}</td>
           <td>{{submits.0.submittedProbability}} %</td>
-          <td>{{result}}</td>
+          <td>{{status}}</td>
           <td>{{submits.0.brierScore}}</td>
           {{!-- <td>{{formatDate data 'MMMM do YYYY'}}</td> --}}
           {{!-- <td><span class="dash-status">{{submitted}}</span></td> --}}

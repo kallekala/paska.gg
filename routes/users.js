@@ -40,7 +40,6 @@ router.post('/register', (req, res)=>{
         errors.push({text: 'passwords dont match'})
     }
     if(errors.length > 0){
-        console.log(errors)
         res.render('users/register', {
             errors: errors,
             name: req.body.name,

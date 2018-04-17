@@ -14,22 +14,22 @@ const User = mongoose.model('users');
 // forecast perussivu {user:req.user.id} 
     //challenge is to filter out submits that are not from user
 router.get('/', ensureAuthenticated, (req, res) => {
-    forecastTopic.find({result:"Unresolved"})
+    forecastTopic.find({status:"Unresolved and open"})
         .populate('submits.user')
         .sort({date:'desc'})
             .then((forecastTopics) => {
-                loggedUser = req.user._id;
+                var loggedUser = req.user._id;
                 for (i = 0; i<forecastTopics.length; i++) {
                     var loggedUserSubmits = [];
                     var subArray = forecastTopics[i].submits;
                     var tama = forecastTopics[i]
                         if(subArray.length>0){
-                            for(i = 0; i<subArray.length; i++){
+                            for(j = 0; j<subArray.length; j++){
                                 //laitan stringeiksi koska muuten type on jostain syystä objekti jolloin ei toimi ifissä
                                 var nokka = String(req.user._id)
-                                var pokka = String(subArray[i].user._id) 
+                                var pokka = String(subArray[j].user._id) 
                                         if(nokka===pokka) {
-                                            loggedUserSubmits.push(subArray[i]);
+                                            loggedUserSubmits.push(subArray[j]);
                                         } 
                             }
                         }
@@ -87,7 +87,6 @@ router.get('/add', ensureAuthenticated, (req, res)=>{
 //submit guess
 router.put('/submitGuess/:id', ensureAuthenticated, (req, res) => {
 
-console.log(typeof req.body.submittedProbability);
 
     const newGuess = {
         title: req.body.title,
@@ -100,7 +99,6 @@ console.log(typeof req.body.submittedProbability);
     let errors = [];
 
     if(req.body.submittedProbability<0 || req.body.submittedProbability>100) {
-        console.log(typeof req.body.submittedProbability);
         errors.push("Please enter a value between 0 and 100");
     }
 
@@ -167,7 +165,7 @@ router.get('/edit/:id', ensureAuthenticated, (req, res) => {
   
 
 
-//submit result 
+//submit status 
 router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
     forecastTopic
         .findOne({
@@ -175,21 +173,21 @@ router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
         })
         .then(forecastTopic => {
 
-            var result = req.body.result;
-            forecastTopic.result = result;
+            var status = req.body.status;
+            forecastTopic.status = status;
             
             for (i = 0; i < forecastTopic.submits.length; i++)
-                if(result=="True"){
-                    forecastTopic.submits[i].brierScore= Math.pow((1-forecastTopic.submits[i].submittedProbability/100), 2)*2;
+                if(status=="True"){
+                    forecastTopic.submits[i].brierScore= Math.round(Math.pow((1-forecastTopic.submits[i].submittedProbability/100), 2)*2*100)/100;
                     forecastTopic.save();    
-                } else if(result=="False"){
-                    forecastTopic.submits[i].brierScore=Math.pow((0-forecastTopic.submits[i].submittedProbability/100), 2)*2;
+                } else if(status=="False"){
+                    forecastTopic.submits[i].brierScore=Math.round(Math.pow((0-forecastTopic.submits[i].submittedProbability/100), 2)*2*100)/100;
                     forecastTopic.save();    
                 };
 
             forecastTopic.save();
         });
-               req.flash('success_msg', `The outcome for "${req.body.title}" was submitted and the topic was archived`);
+               req.flash('success_msg', `The status for "${req.body.title}" was submitted`);
         res.redirect('/forecasts');
     });
 

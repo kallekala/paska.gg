@@ -14,33 +14,45 @@ router.get('/', (req, res) => {
     res.render('index/welcome');
   });
   
+//dashboard uusi
 router.get('/dashboard', ensureAuthenticated, (req, res) => {
-
+console.log("lähtee")
   forecastTopic.find()
-  .populate('submits')
-  .then((forecastTopic)=>{
-    var omat = [];
+  .populate('submits.user')
+  .sort({date:'desc'})
+  .then((forecastTopics) => {
+      console.log("sortin jälkeen")
+      console.log(`topic 3: `)
+      var loggedUser = req.user._id;
+      console.log(forecastTopics.length);
+      for (i = 0; i<forecastTopics.length; i++) {
+          console.log(`loopissa nro: ${i}`);
 
-    const length = forecastTopic[0].submits.length;
-    
-    for (i = 0; i<length; i++) { 
-      if(forecastTopic[0].submits[i].user==req.user.id) {
-        omat.push(forecastTopic[0].submits[i])}
-    };
-    forecastTopic.submits = omat;
-
-    if(forecastTopic.result=1){
-      var truth = true
-    } else if(forecastTopic.result=0){
-
-    }
+          var loggedUserSubmits = [];
+          var tama = forecastTopics[i];
+          var subArray = forecastTopics[i].submits;
+          //ennen submitteja homma toimi
+              if(subArray.length>0){
+                  for(j = 0; j<subArray.length; j++){
+                      //laitan stringeiksi koska muuten type on jostain syystä objekti jolloin ei toimi ifissä
+                      var nokka = String(req.user._id);
+                      var pokka = String(subArray[j].user._id);
+                              if(nokka===pokka) {
+                                  loggedUserSubmits.push(subArray[j]);
+                              } 
+                  }
+              }
+          tama.submits = loggedUserSubmits
+      };
 
       res.render('index/dashboard',{
-        forecasts:forecastTopic
+        forecasts:forecastTopics
       });
 
 });
 })
+
+
 
   router.get('/about', (req, res) => {
     res.render('index/about');

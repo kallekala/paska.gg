@@ -68,7 +68,7 @@
           {{/if}}
 
 
-{{!-- choose result --}}
+{{!-- change status --}}
 <br>
 <div class="row">
 <form action="/forecasts/submitResult/{{forecastTopic.id}}?_method=PUT" method="post">
@@ -79,15 +79,16 @@
     <input type="hidden" name="title" value="{{forecastTopic.title}}">
     <input type="hidden" name="details" value="{{forecastTopic.details}}">
       
-    <select name="result">
-      <option value="" disabled selected>Undecided</option>
+    <select name="status">
+      <option value="Unresolved and open" >Unresolved and Open for Guesses</option>
+      <option value="Unresolved and closed">Unresolved and Closed for Guesses</option>
       <option value="True">True</option>
       <option value="False">False</option>
     </select>
-    <label>Choose result once the event is resolved</label>
+    <label>Change Status Once the Event is Resolved or GUessing is Closed</label>
   </div>
   <div class="input-field col s2">
-    <input type="submit" value="Submit Result" class="btn waves-effect waves-light">
+    <input type="submit" value="Submit Status" class="btn waves-effect waves-light">
     </div>
 
         </form>
