@@ -18,7 +18,7 @@ router.get('/verify', (req, res) => {
     }
 })
 
-//logout user
+//logout user d
 router.get('/logout', (req, res) => {
     req.logout();
     req.flash('success_msg', 'You are logged out');

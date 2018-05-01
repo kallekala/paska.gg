@@ -11,10 +11,11 @@ const forecastTopic = mongoose.model('forecastTopics');
 require('../models/user');
 const User = mongoose.model('users');
 
-// forecast perussivu {user:req.user.id} 
+// forecast perussivu
     //challenge is to filter out submits that are not from user
 router.get('/', ensureAuthenticated, (req, res) => {
-    forecastTopic.find({status:"Unresolved and open"})
+    if (req.user.memberOrganizations[0]==="wipunen"){
+    forecastTopic.find({status:"Unresolved and open",organizations:"wipunen"})
         .populate('submits.user')
         .sort({date:'desc'})
             .then((forecastTopics) => {
@@ -39,6 +40,35 @@ router.get('/', ensureAuthenticated, (req, res) => {
                 forecastTopics:forecastTopics,
                 })
             });
+    }
+
+    else {
+        forecastTopic.find({status:"Unresolved and open",organizations:""})
+        .populate('submits.user')
+        .sort({date:'desc'})
+            .then((forecastTopics) => {
+                var loggedUser = req.user._id;
+                for (i = 0; i<forecastTopics.length; i++) {
+                    var loggedUserSubmits = [];
+                    var subArray = forecastTopics[i].submits;
+                    var tama = forecastTopics[i]
+                        if(subArray.length>0){
+                            for(j = 0; j<subArray.length; j++){
+                                //laitan stringeiksi koska muuten type on jostain syystä objekti jolloin ei toimi ifissä
+                                var nokka = String(req.user._id)
+                                var pokka = String(subArray[j].user._id) 
+                                        if(nokka===pokka) {
+                                            loggedUserSubmits.push(subArray[j]);
+                                        } 
+                            }
+                        }
+                    tama.submits = loggedUserSubmits
+                };
+                res.render('forecasts/forecastsIndex', {
+                forecastTopics:forecastTopics,
+                })
+            });
+    }
 });
 
 //add new
@@ -68,6 +98,7 @@ router.post('/', ensureAuthenticated, (req, res) => {
                     const newUser = {
                         title: req.body.title,
                         details: req.body.details,
+                        organizations: req.body.organizations,
                         user: req.user.id,
                     }
                     new forecastTopic(newUser)

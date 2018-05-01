@@ -33,8 +33,14 @@ const UserSchema = new Schema ({
     date: {
         type: Date,
         default: Date.now
-    }
+    },
+
+    memberOrganizations:[
+       {type: String}
+    ]
+
 });
 
 //luo model. eka argumentti toimii myös collectionin nimenä mihin tulee menemään
 mongoose.model('users', UserSchema);
+

@@ -63,7 +63,11 @@ const forecastTopicSchema = new Schema ({
         type: Schema.Types.ObjectId,
         ref:'users'
         }
-    }]
+    }],
+
+    organizations: [
+        {type: String}
+    ],
 
     });
 
