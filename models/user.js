@@ -35,9 +35,15 @@ const UserSchema = new Schema ({
         default: Date.now
     },
 
-    memberOrganizations:[
-       {type: String}
-    ]
+    memberOrganizations:[{
+        type: Schema.Types.ObjectId,
+        ref:'organizations',
+}],
+
+    admin:{
+        type: Boolean,
+        default: false
+    }
 
 });
 

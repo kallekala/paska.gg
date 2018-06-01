@@ -1,3 +1,5 @@
+<br>
+<img class="logo" src="/img/owl.jpeg">
 <h4>Currently Open Topics</h4>
 <h6>These are the active forecast topics submitted by users</h6>
 
@@ -7,6 +9,7 @@
 <div class="grid js-masonry"
   data-masonry-options='{ "itemSelector": ".grid-item", "columnWidth": 10 }'>
 
+{{#if forecastTopics}}
 {{#each forecastTopics}}
 
 {{!-- topicit --}}
@@ -37,13 +40,13 @@
             </div>
         </div>
     </div>
+{{/each}}
  
     {{else}}
 <p>No Active Topics</p>
 </div>
-{{/each}}
 </div>
 </div>
 <br>
+    {{/if}}
 
-<img class="logo" src="/img/owl.jpeg">

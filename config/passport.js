@@ -1,7 +1,6 @@
-const LocalStrategy = require('passport-local')
-.Strategy;
+// const LocalStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const keys = require('./keys');
 
@@ -10,26 +9,26 @@ const User = mongoose.model('users');
 
 //old stuff
 module.exports = function(passport){
-    passport.use(new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
-      // Match user
-      User.findOne({
-        email:email
-      }).then(user => {
-        if(!user){
-          return done(null, false, {message: 'No User Found'});
-        } 
+    // passport.use(new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
+    //   // Match user
+    //   User.findOne({
+    //     email:email
+    //   }).then(user => {
+    //     if(!user){
+    //       return done(null, false, {message: 'No User Found'});
+    //     } 
   
-        // Match password
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-          if(err) throw err;
-          if(isMatch){
-            return done(null, user);
-          } else {
-            return done(null, false, {message: 'Password Incorrect'});
-          }
-        })
-      })
-    }));
+    //     // Match password
+    //     bcrypt.compare(password, user.password, (err, isMatch) => {
+    //       if(err) throw err;
+    //       if(isMatch){
+    //         return done(null, user);
+    //       } else {
+    //         return done(null, false, {message: 'Password Incorrect'});
+    //       }
+    //     })
+    //   })
+    // }));
 
     passport.use(
       new GoogleStrategy({

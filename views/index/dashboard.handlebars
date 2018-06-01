@@ -1,7 +1,7 @@
 <h1><img class="logo" src="/img/owl.jpeg">Dashboard </h1>
 
-<h4>Aggregate Scores</h4>
 
+<h4>Aggregate Scores</h4>
 
 {{#if forecastTopic}}
   <table class="striped">
@@ -62,5 +62,29 @@
   </table>
 {{else}}
   <p>You don't have resoved topics yet</p>
+{{/if}}
+
+{{#if organizations}}
+<h5>You are member in following organizations:</h5>
+  <table class="striped">
+
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Members</th>
+      </tr>
+    </thead>
+    <tbody>
+
+{{#each organizations}}
+        <tr>
+          <td>{{name}} </td>
+          <td>{{#each members}} {{ firstName}} {{lastName}}; {{/each}}</td>
+        </tr>
+        {{/each}}
+
+    </tbody>
+  </table>
+
 {{/if}}
 

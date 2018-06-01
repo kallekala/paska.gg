@@ -1,0 +1,54 @@
+<br><br>
+
+
+<form action="/users/modify?_method=PUT" method="post" class="col s4">
+    <input type="hidden" name="_method" value="PUT">
+
+    <div class="input-field col s4">
+      
+    <select name="selectedUser">
+              <option value="unselected" disabled selected>Select User</option>
+            {{#each users}}
+                <option value={{_id}}>{{firstName}}</option>
+            {{/each}}
+    </select>
+  </div>
+
+<br>
+
+{{selectedUser}}
+
+<br><br>
+
+
+    <div class="input-field col s4">
+      
+    <select name="selectedOrganization">
+        <option value="nothing" disabled selected>Select Organization to Add</option>
+
+            {{#each organizations}}
+                <option value={{_id}}>{{name}}</option>
+            {{/each}}
+    </select>
+    </div>
+
+    <input type="submit" value="Add" class="btn">
+
+  </form>
+
+
+{{!-- add new org --}}
+
+<h3>Create New Organization</h3>
+  <form action="/addOrg" method="post" class="col s4">
+
+    <div class="row">
+      <div class="input-field">
+        <h5>Name of Organization:</h5>
+        <textarea name="newOrgName"></textarea>
+      </div>
+    </div>
+
+
+    <input type="submit" value="Create" class="btn">
+  </form>

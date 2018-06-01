@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const {ensureAuthenticated, ensureGuest} = require('../helpers/auth');
+
 
 module.exports = router;
 
@@ -11,16 +13,21 @@ require('../models/forecastTopic');
 const forecastTopic = mongoose.model('forecastTopics');
 require('../models/user');
 const User = mongoose.model('users');
+require('../models/organization');
+const organization = mongoose.model('organizations');
 
-// user login route
-router.get('/login', (req, res)=> {
-    res.render("users/login")
-});
+
+// // user login route
+// router.get('/login', (req, res)=> {
+//     res.render("users/login")
+// });
 
 // user register route
 router.get('/register', (req, res)=> {
     res.render("./users/register")
 });
+
+
 
 // Login Form POST
 router.post('/login', (req, res, next) => {
@@ -31,63 +38,67 @@ router.post('/login', (req, res, next) => {
     })(req, res, next);
   });
     
+//show user
+router.get('/show/:id', (req, res) => {
+    User.findOne({
+      _id: req.body.id
+    })
+    //jatka tästä
+//     .populate('memberOrganizations')
+    .then(user => {
+//         var omat = [];
+//         for (i = 0; i<forecastTopic.submits.length; i++) { 
+//             if(forecastTopic.submits[i].user._id==req.user.id) {
+//                 omat.push(forecastTopic.submits[i]);
 
-// register form post
-router.post('/register', (req, res)=>{
+//             }
+//         }
+//         forecastTopic.submits = omat;
+
+        res.render('users/show', {
+            user:user,
+        });
+    })
+});
+
+
+
+
+// add user to organization 
+router.put('/modify', ensureAuthenticated, (req, res) => {
     let errors = [];
-
-    if(req.body.password != req.body.password){
-        errors.push({text: 'passwords dont match'})
+    console.log(req.body)
+    if(!req.body.selectedUser){
+        errors.push("Select User")
     }
-    if(errors.length > 0){
-        res.render('users/register', {
-            errors: errors,
-            name: req.body.name,
-            email: req.body.email,
-            password: req.body.password,
-            password2: req.body.password2
-        });
+    if(!req.body.selectedOrganization){
+        errors.push(" Select Organization")
     }
-       else{
-        User.findOne({email: req.body.email})
-            .then(user => {
-                if(user){
-                    req.flash('error_msg', 'Email already registered');
-                    res.redirect('/users/register');
+    if(errors.length>0){
+        req.flash('error_msg', `${errors}`)
+        res.redirect('../admin');
+    } else {
+    User
+        .findOne({
+        _id: req.body.selectedUser
+        })
+        .then(user => {
+            console.log(user.memberOrganizations[0])
+            let errors = [];
+                for (i = 0; i < user.memberOrganizations.length; i++)
+                if(user.memberOrganizations[i]==req.body.selectedOrganization){
+                    errors.push(` User Already in Organization`)
                 }
-                else {
-                    const newUser = new User({
-                        name: req.body.name,
-                        email: req.body.email,
-                        password: req.body.password,
-                    });
-                    bcrypt.genSalt(10, (err, salt) => {
-                    bcrypt.hash(newUser.password, salt, (err, hash) => {
-                            if(err) throw err;
-                            newUser.password = hash;
-                            newUser.save()
-
-                                .then(user => {
-                                    req.flash('success_msg', 'You are now registered and can login')
-                                    res.redirect('/users/login')
-                                })
-
-                                .catch(err => {
-                                    console.log(err);
-                                    return;
-                                });
-                            });
-                          });
-                }
-            });
-    }
-});
-
-  //delete forecastTopic
-router.delete('/:id', (req, res) => {
-    forecastTopic.remove({_id: req.params.id})
-        .then(() => {
-            req.flash('success_msg', 'Topic removed');
-            res.redirect('/forecasts');            
+                if(errors.length>0){
+                    req.flash('error_msg', `${errors}`)
+                    res.redirect('../admin');
+                }            
+                 else {
+                    user.memberOrganizations.push(req.body.selectedOrganization)
+                    user.save();
+                    req.flash('success_msg', `User Added to Organization`)
+                    res.redirect('../admin');
+                }   
         });
-});
+    };
+    });

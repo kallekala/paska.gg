@@ -1,3 +1,4 @@
+
 var mongoose = require("mongoose");
 var express = require('express');
 const path = require('path');
@@ -11,8 +12,6 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const moment = require('moment');
 
-
-
 const app = express();
 
 // load models
@@ -20,6 +19,9 @@ require('./models/forecastTopic');
 const forecastTopic = mongoose.model('forecastTopics');
 require('./models/user');
 const User = mongoose.model('users');
+require('./models/organization');
+const organization = mongoose.model('organizations');
+
 
 //load routes
 const forecasts = require('./routes/forecasts');
@@ -106,13 +108,6 @@ app.use(function(req, res, next){
 
 //routes
 
-
-  // statistics route
-  app.get('/statistics', (req, res)=> {
-    res.render('statistics')
-});
-
-
 //use routes
 app.use('/', index);
 app.use('/forecasts', forecasts);
@@ -127,3 +122,27 @@ app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
 
+
+
+
+//promise esimerkki
+// function doSomething() {
+//     return new Promise((resolve, reject) => {
+//         if (Math.random()>0.5) {
+//             resolve("kivaa")
+//         } else {
+//             reject("paskaa")
+//         }
+//     }
+//     )
+// };
+
+// function successCallback(message){
+//     console.log(message)
+// };
+
+// function failureCallback(message){
+//     console.log(message)
+// };
+
+// doSomething().then(successCallback, failureCallback);

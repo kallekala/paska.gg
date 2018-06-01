@@ -10,69 +10,50 @@ require('../models/forecastTopic');
 const forecastTopic = mongoose.model('forecastTopics');
 require('../models/user');
 const User = mongoose.model('users');
+require('../models/organization');
+const organization = mongoose.model('organizations');
 
-// forecast perussivu
-    //challenge is to filter out submits that are not from user
+//load helpers for database filtering
+const filters = require('../helpers/filters.js')
+
+//forecast perussivu
 router.get('/', ensureAuthenticated, (req, res) => {
-    if (req.user.memberOrganizations[0]==="wipunen"){
-    forecastTopic.find({status:"Unresolved and open",organizations:"wipunen"})
-        .populate('submits.user')
-        .sort({date:'desc'})
-            .then((forecastTopics) => {
-                var loggedUser = req.user._id;
-                for (i = 0; i<forecastTopics.length; i++) {
-                    var loggedUserSubmits = [];
-                    var subArray = forecastTopics[i].submits;
-                    var tama = forecastTopics[i]
-                        if(subArray.length>0){
-                            for(j = 0; j<subArray.length; j++){
-                                //laitan stringeiksi koska muuten type on jostain syystä objekti jolloin ei toimi ifissä
-                                var nokka = String(req.user._id)
-                                var pokka = String(subArray[j].user._id) 
-                                        if(nokka===pokka) {
-                                            loggedUserSubmits.push(subArray[j]);
-                                        } 
+    filters.getOrgs(req.user._id, res)
+        .then((okTopics) => {
+                    var loggedUser = req.user._id;
+                    for (i = 0; i<okTopics.length; i++) {
+                        var loggedUserSubmits = [];
+                        var subArray = okTopics[i].submits;
+                        var tama = okTopics[i]
+                            if(subArray.length>0){
+                                for(j = 0; j<subArray.length; j++){
+                                    //laitan stringeiksi koska muuten type on jostain syystä objekti jolloin ei toimi ifissä
+                                    var nokka = String(req.user._id)
+                                    var pokka = String(subArray[j].user) 
+                                            if(nokka===pokka) {
+                                                loggedUserSubmits.push(subArray[j]);
+                                            } 
+                                }
                             }
-                        }
-                    tama.submits = loggedUserSubmits
-                };
-                res.render('forecasts/forecastsIndex', {
-                forecastTopics:forecastTopics,
-                })
-            });
-    }
+                        tama.submits = loggedUserSubmits
+                    };
+            res.render('forecasts/forecastsIndex',{
+                forecastTopics:okTopics
+            })
+        
+        })
+        .catch(() => {
+            console.log("ei löytynyt topicceja")
+            res.render('forecasts/forecastsIndex')
 
-    else {
-        forecastTopic.find({status:"Unresolved and open",organizations:""})
-        .populate('submits.user')
-        .sort({date:'desc'})
-            .then((forecastTopics) => {
-                var loggedUser = req.user._id;
-                for (i = 0; i<forecastTopics.length; i++) {
-                    var loggedUserSubmits = [];
-                    var subArray = forecastTopics[i].submits;
-                    var tama = forecastTopics[i]
-                        if(subArray.length>0){
-                            for(j = 0; j<subArray.length; j++){
-                                //laitan stringeiksi koska muuten type on jostain syystä objekti jolloin ei toimi ifissä
-                                var nokka = String(req.user._id)
-                                var pokka = String(subArray[j].user._id) 
-                                        if(nokka===pokka) {
-                                            loggedUserSubmits.push(subArray[j]);
-                                        } 
-                            }
-                        }
-                    tama.submits = loggedUserSubmits
-                };
-                res.render('forecasts/forecastsIndex', {
-                forecastTopics:forecastTopics,
-                })
-            });
-    }
+})
 });
+
 
 //add new
 router.post('/', ensureAuthenticated, (req, res) => {
+    console.log(req.body)
+
     // validation for server side
     let errors = [];
     if (!req.body.title) {
@@ -95,11 +76,19 @@ router.post('/', ensureAuthenticated, (req, res) => {
                     })
                 }
                 else {
+                    var orgut = [];
+
+                    for (i = 0; i<req.user.memberOrganizations.length; i++) {
+                        var org = req.user.memberOrganizations[i];
+                        if(req.body[org]){orgut.push(req.user.memberOrganizations[i])
+                        }
+                    }                    
+
                     const newUser = {
                         title: req.body.title,
                         details: req.body.details,
-                        organizations: req.body.organizations,
-                        user: req.user.id,
+                        organizations: orgut,
+                        user: req.user.id
                     }
                     new forecastTopic(newUser)
                     .save()
@@ -107,12 +96,22 @@ router.post('/', ensureAuthenticated, (req, res) => {
                         req.flash('success_msg', `Forecast topic "${forecastTopic.title}" was added`);
                         res.redirect('/forecasts')
                     });
-                };
-    });    
+                };   
+            });    
 });
 
+
 router.get('/add', ensureAuthenticated, (req, res)=>{
-       res.render('./forecasts/addForecast');
+
+    User.find({_id:req.user._id})
+        .populate('memberOrganizations')
+        .then(user => {
+        var organizations = user[0].memberOrganizations;
+        console.log(user[0].memberOrganizations)
+       res.render('./forecasts/addForecast', {
+           organizations:organizations
+       });
+    });
 });
 
 //submit guess
@@ -156,9 +155,7 @@ router.get('/scoreboard', (req, res)=>{
 
 // Show Single forecast
 router.get('/show/:id', (req, res) => {
-    forecastTopic.findOne({
-      _id: req.params.id
-    })
+    forecastTopic.findOne({_id: req.params.id})
     .populate('user')
     .populate('comments.commentUser')
     .populate('submits.user')
@@ -193,8 +190,6 @@ router.get('/edit/:id', ensureAuthenticated, (req, res) => {
       }
     });
   });
-  
-
 
 //submit status 
 router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
@@ -267,6 +262,15 @@ router.post('/comment/:id', (req, res) => {
       forecastTopic.remove({_id: req.params.id})
         .then(() => {
             req.flash('success_msg', 'Topic deleted');
+            res.redirect('/forecasts');            
+        });
+});
+
+  //delete forecastTopic alternate that was in users-route
+  router.delete('/:id', (req, res) => {
+    forecastTopic.remove({_id: req.params.id})
+        .then(() => {
+            req.flash('success_msg', 'Topic removed');
             res.redirect('/forecasts');            
         });
 });

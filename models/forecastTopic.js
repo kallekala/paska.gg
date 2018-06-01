@@ -14,14 +14,12 @@ const forecastTopicSchema = new Schema ({
     submittedBy: {
         type: String,
     },
-
     
     status: {
         type: String,
         default: "Unresolved and open",
         required: true
     },
-
 
     user:{
         type: Schema.Types.ObjectId,
@@ -66,8 +64,16 @@ const forecastTopicSchema = new Schema ({
     }],
 
     organizations: [
-        {type: String}
+        {type: String,
+        }
     ],
+
+    visible: {
+        
+        type:Boolean,
+        default: false
+    }
+
 
     });
 

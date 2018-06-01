@@ -1,21 +1,9 @@
-{{!-- <div class="card card-body">
-    <h3>Submit New Forecast Topic</h3>
-    <form action="/forecasts" method="post">
-        <div class="form-group">
-            <label for="title"> Title </label>
-            <input type="text" class="form-control" name="title" required></input>   
-        </div>
-        <div class="form-group">
-            <label for="details"> Details and Deadline </label>
-            <textarea class="form-control" name="details" required></textarea>    
-        </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div> --}}
 
 <h1>Add Forecast Topic</h1>
 <div class="row">
   <form action="/forecasts" method="post" class="col s12">
+
+
     <div class="row">
       <div class="input-field">
         <input type="text" name="title">
@@ -49,7 +37,6 @@
     </div>
 
 
-            <input type="hidden" name="organizations" value="wipunen">       
 
     {{!-- <div class="row">
       <div class="input-field" type="hidden" value="wipunen">
@@ -58,7 +45,15 @@
       </div>
     </div> --}}
 
+        <h5>Choose Organization Visibility:</h5>
+      {{#each organizations}}
+    <p>
+      <input type="checkbox" name="{{_id}}" class="filled-in"  id="filled-in-box{{name}}" />
+      <label for="filled-in-box{{name}}">{{name}}</label>
+    </p>
+{{/each}}
 
+<br>
     <input type="submit" value="Save" class="btn">
   </form>
 </div>
