@@ -33,8 +33,10 @@ function getOrgs(userId) {
                 
                 forecastTopic.find({})
                     .then(topics => {
-
+                        console.log(topics.length)
+                        if(topics.length>0){
                         for (i = 0; i<topics.length; i++) {
+
                             if(topics[i].organizations.length>0){
 
                                 for (j = 0; j<topics[i].organizations.length; j++) {
@@ -44,6 +46,7 @@ function getOrgs(userId) {
                                         if(topics[i].organizations[j]==memberOrganizations[l]){
                                             topics[i].visible=true
                                             okTopics.push(topics[i])
+
                                         }
                                     }
                                 }
@@ -54,6 +57,8 @@ function getOrgs(userId) {
                                 reject("ei löytynyt")
                             }     
                         }
+                        }
+                        else {reject("ei löydy")}
                     })       
             })
         }
