@@ -84,7 +84,6 @@ router.post('/addOrg', ensureAuthenticated, (req, res) => {
 
 //dashboard
 router.get('/dashboard', ensureAuthenticated, (req, res) => {
-console.log("tässä")
         forecastTopic.find()
         .populate('submits.user')
         .sort({date:'desc'})
@@ -118,8 +117,6 @@ console.log("tässä")
                         }
             };
 
-
-
             //count topics participated by logged user
             forecastTopic.count=forecastTopic.length;
             function countUnique(iterable) {
@@ -138,26 +135,26 @@ console.log("tässä")
 
         console.log("ennen orgsien kaivamista")
 
-            //find orgs new
+            //find user's orgs
             filters.listOwnOrgs(req.user._id).then(ownOrgs=>{
-                res.render('index/dashboard',{
-                    forecastTopic:forecastTopic,
-                    organizations:ownOrgs
-                });
+                // fill user's org members
+                filters.fillOrgsMembers(ownOrgs)
+                    .then(orgs => {
+                        res.render('index/dashboard',{
+                            forecastTopic:forecastTopic,
+                            organizations:orgs,
+                        });
+                    })
             }).catch(()=> {
                 console.log("vituiksi")
                 res.render('index/welcome',);
             })
         })
-    
 });
 
 //stats page
 router.get('/statistics', (req, res) => {
     res.render('index/statistics');
 });
-
-
-
 
 module.exports = router;

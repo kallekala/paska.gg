@@ -21,6 +21,13 @@ const forecastTopicSchema = new Schema ({
         required: true
     },
 
+    open: {
+        
+        type:Boolean,
+        default: true
+    },
+
+
     user:{
         type: Schema.Types.ObjectId,
         ref:'users'

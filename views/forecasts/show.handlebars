@@ -5,7 +5,7 @@
     </h3>
     <div class="card story">
       <div class="card-content">
-        <span class="card-title">{{formatDate forecastTopic.date 'MMMM Do YYYY'}}</span>
+        <span class="card-title">Created: {{formatDate forecastTopic.date 'MMMM Do YYYY'}}</span>
         {{{forecastTopic.details}}}
       </div>
     </div>
@@ -15,14 +15,17 @@
         <div class="card-content">
 
 {{!-- new guess --}}
-        <p>Your current guess for "Yes": {{forecastTopic.submits.0.submittedProbability}} %</p>
-        <p>You can modify your guess as often as you want until the topic is resolved</p>
+        <p>Your newest guess for "Yes": {{forecastTopic.submits.0.submittedProbability}} %</p>
 
 
 <div class="row">
     <form action="/forecasts/submitGuess/{{forecastTopic.id}}?_method=PUT" method="post">
         <input type="hidden" name="title"  value="{{forecastTopic.title}}">
         <input type="hidden" name="details" value="{{forecastTopic.details}}">
+        {{#if forecastTopic.open}}
+        <br>
+        <p>You can modify your guess as often as you want until the topic is closed</p>
+
         <div class="input-field">
         <input class="materialize-textarea" type="text" name="submittedProbability">
         <label for="title">To modify your guess insert 0-100</label>
@@ -32,6 +35,12 @@
     </div>
         </form>
         </div>
+      {{else}}
+      <br>
+        <p>This topic is closed and you cannot submit guesses</p>
+
+
+        {{/if}}
 <br>
 
 {{!-- COMMENTS --}}

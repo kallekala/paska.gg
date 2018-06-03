@@ -36,17 +36,12 @@ function getOrgs(userId) {
                         console.log(topics.length)
                         if(topics.length>0){
                         for (i = 0; i<topics.length; i++) {
-
                             if(topics[i].organizations.length>0){
-
                                 for (j = 0; j<topics[i].organizations.length; j++) {
-
                                     for (l = 0; l<memberOrganizations.length; l++) {
-
                                         if(topics[i].organizations[j]==memberOrganizations[l]){
                                             topics[i].visible=true
                                             okTopics.push(topics[i])
-
                                         }
                                     }
                                 }
@@ -105,5 +100,44 @@ function listOwnOrgs(userId) {
     });
 }
 
+function fillOrgsMembers(orgs){
+    return new Promise((resolve, reject) => {
+        var members = [];
+
+        if(orgs.length>0){
+
+            var pituus = orgs.length;
+            for (i = 0; i<pituus; i++) {
+                var org = orgs[i]
+                User.find({})
+                    .then(users=> {
+                        var userPituus = users.length;
+                        for (j = 0; j<userPituus; j++){
+                            var userOrgsLength = users[j].memberOrganizations.length;
+                            if(userOrgsLength>0){
+                                for (h = 0; h<userOrgsLength; h++){
+                                    var paska = String(org._id);
+                                    var housussa = String(users[j].memberOrganizations[h])
+                                    if(paska===housussa){
+                                        console.log(paska)
+                                        console.log(housussa)
+                                        members.push(users[j])
+
+                                    }
+                                }
+                            }
+                        }
+                    org.members = members
+                    console.log(`membersarray: ${members}`)
+                    resolve(orgs)        
+                    })
+            }
+        } else {
+            reject("no orgs")
+        }
+    });
+}
+
 module.exports.getOrgs = getOrgs;
 module.exports.listOwnOrgs = listOwnOrgs;
+module.exports.fillOrgsMembers = fillOrgsMembers;

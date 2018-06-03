@@ -3,6 +3,7 @@
 
 <h4>Aggregate Scores</h4>
 
+
 {{#if forecastTopic}}
   <table class="striped">
     <thead>
@@ -41,9 +42,9 @@
     <tbody>
       {{#each forecastTopic}}
         <tr>
-            {{!-- poistan linkin toistaiseksi koska pitää olla erilainen sivu kun ratkaistu
-          <td><a href="/forecastTopic/show/{{id}}">{{title}}</a></td> --}}
-          <td>{{title}}</td>
+            {{!-- poistan linkin toistaiseksi koska pitää olla erilainen sivu kun ratkaistu--}}
+          <td><a href="/forecasts/show/{{id}}">{{title}}</a></td> 
+          {{!-- <td>{{title}}</td> --}}
           <td>{{submits.0.submittedProbability}} %</td>
           <td>{{status}}</td>
           <td>{{submits.0.brierScore}}</td>

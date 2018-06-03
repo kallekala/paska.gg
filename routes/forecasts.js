@@ -202,6 +202,15 @@ router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
             var status = req.body.status;
             forecastTopic.status = status;
             
+            if(status != "Unresolved and open"){
+                forecastTopic.open = false;
+                forecastTopic.save();
+            }
+            else {
+                forecastTopic.open = true;
+                forecastTopic.save();
+            }
+
             for (i = 0; i < forecastTopic.submits.length; i++)
                 if(status=="True"){
                     forecastTopic.submits[i].brierScore= Math.round(Math.pow((1-forecastTopic.submits[i].submittedProbability/100), 2)*2*100)/100;
