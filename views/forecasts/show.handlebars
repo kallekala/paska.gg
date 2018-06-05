@@ -6,18 +6,97 @@
     <div class="card story">
       <div class="card-content">
         <span class="card-title">Created: {{formatDate forecastTopic.date 'MMMM Do YYYY'}}</span>
+        <span class="card-title">Status: {{forecastTopic.status}}</span>
+
         {{{forecastTopic.details}}}
       </div>
     </div>
-
 
       <div class="card">
         <div class="card-content">
 
 {{!-- new guess --}}
-        <p>Your newest guess for "Yes": {{forecastTopic.submits.0.submittedProbability}} %</p>
+      <h5>Answer Options</h5>
+
+  <div class="row">
+    <form action="/forecasts/submitGuess/{{forecastTopic.id}}?_method=PUT" method="post">
+        <input type="hidden" name="title"  value="{{forecastTopic.title}}">
+        <input type="hidden" name="details" value="{{forecastTopic.details}}">
+        {{#if forecastTopic.open}}
+        <br>
+        <p>You can modify your guess as often as you want until the topic is closed</p>
+        <br>     
+      {{#if forecastTopic.options.[0]}}
+        <p> option 1: {{forecastTopic.options.[0]}}</p>
+        <div class="input-field">
+          <input class="materialize-textarea" type="text" name="submittedProbability0">
+          <label for="title">To modify your guess insert 0-100</label>
+        </div>
+      {{/if}}
+      {{#if forecastTopic.options.[1]}}
+        <p> option 2: {{forecastTopic.options.[1]}}</p>
+        <div class="input-field">
+          <input class="materialize-textarea" type="text" name="submittedProbability1">
+          <label for="title">To modify your guess insert 0-100</label>
+        </div>
+      {{/if}}
+      {{#if forecastTopic.options.[2]}}
+        <p> option 3: {{forecastTopic.options.[2]}}</p>
+        <div class="input-field">
+          <input class="materialize-textarea" type="text" name="submittedProbability2">
+          <label for="title">To modify your guess insert 0-100</label>
+        </div>
+      {{/if}}
+      {{#if forecastTopic.options.[3]}}
+        <p> option 4: {{forecastTopic.options.[3]}}</p>
+        <div class="input-field">
+          <input class="materialize-textarea" type="text" name="submittedProbability3">
+          <label for="title">To modify your guess insert 0-100</label>
+        </div>
+      {{/if}}
+      {{#if forecastTopic.options.[4]}}
+        <p> option 5: {{forecastTopic.options.[4]}}</p>
+        <div class="input-field">
+          <input class="materialize-textarea" type="text" name="submittedProbability4">
+          <label for="title">To modify your guess insert 0-100</label>
+        </div>
+      {{/if}}
 
 
+
+      <div class="input-field col">
+        <input type="submit" value="Submit Guesses" class="btn waves-effect waves-light">
+      </div>
+    </form>
+  </div>
+      {{else}}
+    <br>
+<h5>Answer Options</h5>
+      {{#if forecastTopic.options.[0]}}
+        <p> option 0: {{forecastTopic.options.[0]}}</p>
+      {{/if}}
+            {{#if forecastTopic.options.[1]}}
+        <p> option 1: {{forecastTopic.options.[1]}}</p>
+      {{/if}}
+      {{#if forecastTopic.options.[2]}}
+        <p> option 2: {{forecastTopic.options.[2]}}</p>
+      {{/if}}
+      {{#if forecastTopic.options.[3]}}
+        <p> option 3: {{forecastTopic.options.[3]}}</p>
+      {{/if}}
+      {{#if forecastTopic.options.[4]}}
+        <p> option 4: {{forecastTopic.options.[4]}}</p>
+      {{/if}}
+<br>
+
+    <p>This topic is closed and you cannot submit guesses</p>
+    <br>
+      {{/if}}
+
+
+
+
+{{!-- old submit guess for single guess
 <div class="row">
     <form action="/forecasts/submitGuess/{{forecastTopic.id}}?_method=PUT" method="post">
         <input type="hidden" name="title"  value="{{forecastTopic.title}}">
@@ -41,7 +120,7 @@
 
 
         {{/if}}
-<br>
+<br> --}}
 
 {{!-- COMMENTS --}}
           <span class="card-title">Comments</span>
@@ -91,10 +170,13 @@
     <select name="status">
       <option value="Unresolved and open" >Unresolved and Open for Guesses</option>
       <option value="Unresolved and closed">Unresolved and Closed for Guesses</option>
-      <option value="True">True</option>
-      <option value="False">False</option>
+      <option value="Option 0 is True">Option 0 is True</option>
+      <option value="Option 1 is True">Option 1 is True</option>
+      <option value="Option 2 is True">Option 2 is True</option>
+      <option value="Option 3 is True">Option 3 is True</option>
+      <option value="Option 4 is True">Option 4 is True</option>
     </select>
-    <label>Change Status Once the Event is Resolved or Guessing is Closed</label>
+    <label>Change Status Once the Topic is Resolved and/or Guessing is Closed</label>
   </div>
   <div class="input-field col s2">
     <input type="submit" value="Submit Status" class="btn waves-effect waves-light">

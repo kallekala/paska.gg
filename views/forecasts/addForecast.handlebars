@@ -37,6 +37,22 @@
     </div>
 
 
+  <form action="/forecasts" method="post" class="col s12">
+    <div class="row">
+      <div class="input-field">
+        <h5>Choose number of answer options:</h5>
+    <select name="nOfOptions">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+  
+
+
+      </div>
+    </div>
+
 
     {{!-- <div class="row">
       <div class="input-field" type="hidden" value="wipunen">
@@ -54,6 +70,6 @@
 {{/each}}
 
 <br>
-    <input type="submit" value="Save" class="btn">
+    <input type="submit" value="Next" class="btn">
   </form>
 </div>

@@ -1,0 +1,22 @@
+<h1>Define Answer Options for {{forecastTopic.title}}</h1>
+<div class="row">
+  <form action="/forecasts" method="post" class="col s12">
+
+<input type="hidden" name="second" value="true">
+<input type="hidden" name="title"  value="{{forecastTopic.title}}">
+
+{{#each forecastTopic.options}}
+
+    <div class="row">
+      <div class="input-field">
+        <h5>Option: {{this}}</h5>
+        index: {{@index}}
+        <textarea name="options{{@index}}"></textarea>
+      </div>
+    </div>
+
+{{/each}}
+
+    <input type="submit" value="Add Topic" class="btn">
+  </form>
+</div>

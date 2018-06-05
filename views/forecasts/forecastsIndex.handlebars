@@ -1,5 +1,4 @@
 <br>
-<img class="logo" src="/img/owl.jpeg">
 <h4>Currently Open Topics</h4>
 <h6>These are the active forecast topics submitted by users</h6>
 
@@ -20,19 +19,19 @@
             <h5>{{title}}</h5>
             <p>{{details}}</p>
 <br>
-            Your current guess for "Yes": {{submits.0.submittedProbability}} %
+            {{!-- Your current guess for "Yes": {{submits.0.submittedProbability}} % --}}
 
             <br><br>
 
 {{!-- new guess --}}
-                        <form action="/forecasts/submitGuess/{{id}}?_method=PUT" method="post">
+                        {{!-- <form action="/forecasts/submitGuess/{{id}}?_method=PUT" method="post">
                         <input type="hidden" name="title"  value="{{title}}">
                         <input type="hidden" name="details" value="{{details}}">
                             <label for="title">Guess (0-100 %)</label>
 
                             <input class="materialize-textarea" type="text" name="submittedProbability">
                         <input type="submit" value="Guess" class="waves-effect waves-light btn">
-                    </form>
+                    </form> --}}
 <br>
             <div class="card-action">
                 <a class="btn grey" href="/forecasts/show/{{id}}">More</a>

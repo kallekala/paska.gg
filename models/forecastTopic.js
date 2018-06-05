@@ -14,7 +14,11 @@ const forecastTopicSchema = new Schema ({
     submittedBy: {
         type: String,
     },
-    
+
+    options: {
+        type: [],
+    },
+
     status: {
         type: String,
         default: "Unresolved and open",
@@ -22,11 +26,9 @@ const forecastTopicSchema = new Schema ({
     },
 
     open: {
-        
         type:Boolean,
         default: true
     },
-
 
     user:{
         type: Schema.Types.ObjectId,
@@ -40,20 +42,22 @@ const forecastTopicSchema = new Schema ({
             ref:'users'    
         },
         
-        submittedProbability:{
+        submittedProbability:[{
             type:Number, min: 0, max: 100,
-        },
+        }],
 
-        brierScore: {
+        brierScore: [{
             type: String,
             default: "Unresolved"
-        },
+        }],
 
         date: {
             type: Date,
             default: Date.now
         }
     }],
+
+    result: [],
 
     comments: [{
         commentBody: {
@@ -76,13 +80,11 @@ const forecastTopicSchema = new Schema ({
     ],
 
     visible: {
-        
         type:Boolean,
         default: false
-    }
+    },
 
-
-    });
+    }, { versionKey: false });
 
 //luo model. eka argumentti toimii myös collectionin nimenä mihin tulee menemään
 mongoose.model('forecastTopics', forecastTopicSchema);

@@ -27,17 +27,15 @@ function getOrgs(userId) {
         User.findOne({_id:userId})
             .populate('submits.user')
             .then(user => {
-
                 let okTopics =[];
                 var memberOrganizations=user.memberOrganizations
-                
                 forecastTopic.find({})
                     .then(topics => {
-                        console.log(topics.length)
                         if(topics.length>0){
                         for (i = 0; i<topics.length; i++) {
                             if(topics[i].organizations.length>0){
                                 for (j = 0; j<topics[i].organizations.length; j++) {
+
                                     for (l = 0; l<memberOrganizations.length; l++) {
                                         if(topics[i].organizations[j]==memberOrganizations[l]){
                                             topics[i].visible=true
@@ -46,14 +44,15 @@ function getOrgs(userId) {
                                     }
                                 }
                             }
+                        }
                             if(okTopics.length>0){
                                 resolve(okTopics)
                             } else {
-                                reject("ei löytynyt")
+                                reject("ei löytynyt useriin matchaavaa")
                             }     
+                        
                         }
-                        }
-                        else {reject("ei löydy")}
+                        else {reject("topics.length on 0")}
                     })       
             })
         }
@@ -138,6 +137,108 @@ function fillOrgsMembers(orgs){
     });
 }
 
+function openOrClosed(topic, status){
+    return new Promise((resolve, reject) => {
+        console.log("openor closedissa")
+        console.log(status)
+        forecastTopic
+        .findOne({
+        title: topic.title
+        })
+        .then(topic => {
+            //stops before this
+            console.log("findin läpi")
+
+            topic.status = status;
+            console.log(topic.status)
+
+            
+            if(status != "Unresolved and open"){
+                console.log("closedin puolella")
+                topic.open = false;
+                topic.save();
+                resolve(topic)
+            }
+            else {
+                console.log("openin puolella")
+                topic.open = true;
+                topic.result=[0,0,0,0,0];
+                topic.save();
+                resolve(topic);
+            }
+
+        })
+    })
+}
+
+function setResult(topicId, status){
+    return new Promise((resolve, reject) => {
+        forecastTopic
+        .findOne({
+        _id: topicId
+        })
+            .then((topic) => {
+                // var status = String(status);
+                console.log(`status setresultissa: ${status}`)
+                //make result array if topic is resolved
+                if(status=="Option 0 is True"){
+                    console.log("optiossa 0")
+                    topic.result = [1,0,0,0,0];
+                    topic.save();   
+                    console.log(`ennen resolvea: ${topic}`)
+                    resolve(topic)
+                } 
+                if(status=="Option 1 is True"){
+                    topic.result = [0,1,0,0,0];
+                    console.log("optiossa 1")
+                    topic.save();  
+                    console.log(`ennen resolvea: ${topic}`)
+                    resolve(topic)
+                } 
+                if(status=="Option 2 is True"){
+                    topic.result = [0,0,1,0,0];
+                    topic.save();   
+                    console.log(`ennen resolvea: ${topic}`)
+                    resolve(topic)
+                } 
+                if(status=="Option 3 is True"){
+                    topic.result = [0,0,0,1,0];
+                    topic.save();   
+                    console.log(`ennen resolvea: ${topic}`)
+                    resolve(topic)
+                } 
+                if(status=="Option 4 is True"){
+                    topic.result = [0,0,0,0,1];
+                    topic.save();   
+                    console.log(`ennen resolvea: ${topic}`)
+                    resolve(topic)
+                };
+            })
+    })
+}
+
+//to calculate briers on resolved topic
+function calculateBriers(topic){
+    return new Promise((resolve, reject) => 
+    {
+        for (i = 0; i < topic.submits.length; i++){
+            var brier = 0;
+            var score = 0;
+            for (j = 0; j < 5; j++){
+                var score = Math.round(Math.pow((topic.submits[i].submittedProbability[j]/100-topic.result[j]), 2)*100)/100;
+                var brier = brier+score;
+            }
+            topic.submits[i].brierScore = brier;
+            topic.save()
+        };
+        resolve(topic)
+    })
+}
+
+
 module.exports.getOrgs = getOrgs;
 module.exports.listOwnOrgs = listOwnOrgs;
 module.exports.fillOrgsMembers = fillOrgsMembers;
+module.exports.setResult = setResult;
+module.exports.openOrClosed = openOrClosed;
+module.exports.calculateBriers = calculateBriers;
