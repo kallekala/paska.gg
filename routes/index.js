@@ -127,7 +127,7 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
                             filters.fillOrgsMembers(ownOrgs)
                                 .then(orgs => {
                                     console.log("tässä")
-
+                                    console.log(`orgs ennnen: ${orgs}`)
                                     res.render('index/dashboard',{
                                         forecastTopic:forecastTopic,
                                         organizations:orgs,

@@ -21,7 +21,11 @@
             {{#if open}}
             <p>Options: {{options}}</p><br>
             {{/if}}
-            Your current guess: {{submits.0.submittedProbability}} %<br><br>
+          {{#if submits.0.submittedProbability}}
+            <td>Your Current Guess: {{submits.0.submittedProbability}} %</td>
+          {{else}}
+            <td>Your Current Guess: No Submit</td>
+          {{/if}}
             <p>Status: {{status}}</p>
 
 

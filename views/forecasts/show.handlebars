@@ -9,7 +9,7 @@
         <span class="card-title">Created: {{formatDate forecastTopic.date 'MMMM Do YYYY'}}</span>
         <span class="card-title">Status: {{forecastTopic.status}}</span>
         <p>{{forecastTopic.details}}</p>
-        <p>Organizations: {{forecastTopic.organizations.[0]}}</p>
+        <p>Organizations: {{#each forecastTopic.organizations}}{{name}}; {{/each}}</p>
 
       </div>
     </div>
@@ -96,34 +96,6 @@
       {{/if}}
 
 
-
-
-{{!-- old submit guess for single guess
-<div class="row">
-    <form action="/forecasts/submitGuess/{{forecastTopic.id}}?_method=PUT" method="post">
-        <input type="hidden" name="title"  value="{{forecastTopic.title}}">
-        <input type="hidden" name="details" value="{{forecastTopic.details}}">
-        {{#if forecastTopic.open}}
-        <br>
-        <p>You can modify your guess as often as you want until the topic is closed</p>
-
-        <div class="input-field">
-        <input class="materialize-textarea" type="text" name="submittedProbability">
-        <label for="title">To modify your guess insert 0-100</label>
-    </div>
-<div class="input-field col">
-    <input type="submit" value="Submit Guess" class="btn waves-effect waves-light">
-    </div>
-        </form>
-        </div>
-      {{else}}
-      <br>
-        <p>This topic is closed and you cannot submit guesses</p>
-
-
-        {{/if}}
-<br> --}}
-
 {{!-- COMMENTS --}}
           <span class="card-title">Comments</span>
 
@@ -190,19 +162,40 @@
         </div>
       </div>
 
+<br>
+
+<h5>Guesses</h5>
+  <table class="striped">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Date</th>
+        <th>Guess</th>
+        <th>Brier Score</th>
+      </tr>
+    </thead>
+
+    <tbody>
+{{#each forecastTopic.submits}}
+        <tr>
+          <td><a href="/users/show/{{user._id}}">{{user.firstName}} {{user.lastName}};</a></td>          
+          <td>{{formatDate date 'MMMM Do YYYY'}}</td>
+          {{#if submittedProbability}}
+            <td>{{submittedProbability}} %</td>
+            {{else}}
+            <td>No Submit</td>
+            {{/if}}
+            {{#if brierScore}}
+              <td>{{brierScore}}</td>
+              {{else}}
+              <td>Not Resolved</td>
+            {{/if}}
+        </tr>
+        {{/each}}
+
+    </tbody>
+  </table>
 
 
-  {{!-- </div>
-  <div class="col s12 m4">
-    <div class="card center-align">
-      <div class="card-content">
-        <span class="card-title">{{forecastTopic.user.firstName}} {{forecastTopic.user.lastName}}</span>
-        <img src="{{forecastTopic.user.image}}" class="circle responsive-img">
-      </div>
-      <div class="card-action">
-        <a href="/forecasts/user/{{forecastTopic.user.id}}">More From {{forecastTopic.user.firstName}}</a>
-      </div>
-    </div>
-  </div>
-</div> --}}
+
 

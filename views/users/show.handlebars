@@ -19,12 +19,6 @@
   </table>
 
 
-{{#each userTopics}}
-
-{{this}}
-
-{{/each}}
-
 {{#if userTopics}}
 <h5>Activity by Topic:</h5>
 
@@ -41,8 +35,12 @@
     <tbody>
       {{#each userTopics}}
         <tr>
-          <td>{{title}}</td>
-          <td>{{submits.0.submittedProbability}} %</td>
+          <td><a href="/forecasts/show/{{id}}">{{title}}</a></td>
+          {{#if submits.0.submittedProbability}}
+            <td>{{submits.0.submittedProbability}} %</td>
+          {{else}}
+            <td>No Submit</td>
+          {{/if}}
           <td>{{status}}</td>
           <td>{{submits.0.brierScore}}</td>
         </tr>

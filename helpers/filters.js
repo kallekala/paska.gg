@@ -135,34 +135,22 @@ function fillOrgsMembers(orgs){
                     .then(users=> {
                         for (i = 0; i<pituus; i++) {
                             orgs[i].members = [];
-
-                        console.log(`i eka: ${i}`)
-            
-                        console.log(`i toka: ${i}`)
-
                             var userPituus = users.length;
                             for (j = 0; j<userPituus; j++){
                                 var userOrgsLength = users[j].memberOrganizations.length;
                                 if(userOrgsLength>0){
-                                    console.log(`i kolmas: ${i}`)
-
                                     for (h = 0; h<userOrgsLength; h++){
-
                                         var paska = String(orgs[i]._id);
-                                        console.log("täälles")
-                                        console.log(`i neljäs: ${i}`)
-
-
                                         var housussa = String(users[j].memberOrganizations[h])
                                         if(paska===housussa){
-                                            members.push(users[j])
+                                            orgs[i].members.push(users[j])
                                         }
                                     }
                                 }
                             }
                         }
-                            orgs.members = members
-                    console.log(orgs)
+                    console.log(`funktion lopussa members: ${members}`)
+                    console.log(`funktion lopussa orgs: ${orgs}`)
                     resolve(orgs)        
                     })
         } else {reject("no orgs")}
@@ -172,7 +160,10 @@ function fillOrgsMembers(orgs){
 //shortens guess array. complicated way. hbs helper might make more sense
 function shortenGuessArrays(topics){
     return new Promise((resolve, reject) => {
+        console.log(`topicssit ulos : ${topics}`)
+        console.log(`topicssit ulos 0: ${topics[0]}`)
         if(topics.length>0){
+            console.log("tässä")
             let pituus = topics.length;
             for (i = 0; i<pituus; i++) {
                 var nOfOptions = topics[i].options.length;
@@ -185,16 +176,28 @@ function shortenGuessArrays(topics){
                         if(difference===3){topics[i].submits[j].submittedProbability.splice(2, 3);}
                     }
                 }
-            } resolve(topics)
+            }
+            console.log("ennen resolvea")
+            resolve(topics)
         } else {
+            //if not array. used in show single forecast
+            if(topics) {
+                console.log("here")
+                var pituus3 = topics.submits.length;
+                console.log(`pituus3: ${pituus3}`)
+                for (k = 0; k<pituus3; k++) {
+                    var nOfOptions = topics.options.length;
+                    let difference = 5-nOfOptions
+                    if(difference===1){topics.submits[k].submittedProbability.splice(4, 1);}
+                    if(difference===2){topics.submits[k].submittedProbability.splice(3, 2);}
+                    if(difference===3){topics.submits[k].submittedProbability.splice(2, 3);}
+                }
+                resolve(topics)
+            }
             reject("no topics")
         }
     })
 }
-
-
-
-
 
 //status related
 function openOrClosed(topic, status){

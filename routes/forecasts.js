@@ -202,19 +202,18 @@ router.get('/show/:id', (req, res) => {
     .populate('comments.commentUser')
     .populate('submits.user')
     .populate('organizations')
-    .then(forecastTopic => {
-        var omat = [];
-        for (i = 0; i<forecastTopic.submits.length; i++) { 
-            if(forecastTopic.submits[i].user._id==req.user.id) {
-                omat.push(forecastTopic.submits[i]);
-            }
-        }
-        forecastTopic.submits = omat;
-
-        res.render('forecasts/show', {
-            forecastTopic:forecastTopic,
-        });
-    })
+    .then((forecastTopic) => {
+            filters.shortenGuessArrays(forecastTopic)
+                .then((forecastTopic)=> {
+                    res.render('forecasts/show', {
+                        forecastTopic:forecastTopic,
+                    });
+                })
+            .catch((err)=>{
+                console.log(err)
+                res.redirect('/');
+            })
+    })   
 });
 
 //submit guess

@@ -43,7 +43,6 @@
     <tbody>
       {{#each forecastTopic}}
         <tr>
-            {{!-- poistan linkin toistaiseksi koska pitää olla erilainen sivu kun ratkaistu--}}
           <td><a href="/forecasts/show/{{id}}">{{title}}</a></td> 
           <td>{{options}}</td>
           {{#if submits.0.submittedProbability}}
@@ -53,15 +52,6 @@
           {{/if}}
           <td>{{status}}</td>
           <td>{{submits.0.brierScore}}</td>
-          {{!-- <td>{{formatDate data 'MMMM do YYYY'}}</td> --}}
-          {{!-- <td><span class="dash-status">{{submitted}}</span></td> --}}
-          {{!-- <td>
-            <a class="btn left-align" href="/stories/edit/{{id}}"><i class="fa fa-pencil"></i> Edit</a>
-            <form action="/stories/{{id}}?_method=DELETE" method="post" id="delete-form">
-              <input type="hidden" name="_method" value="DELETE">
-              <button type="submit" class="btn red"><i class="fa fa-remove"></i> Delete</button>
-            </form>
-          </td> --}}
         </tr>
       {{/each}}
     </tbody>
@@ -83,7 +73,6 @@
     
     <tbody>
       {{#each organizations}}
-      {{this}}
         <tr>
           <td>{{name}} </td>
            <td>{{#each members}}<a href="/users/show/{{id}}">{{ firstName}} {{lastName}};</a>{{/each}}</td>
