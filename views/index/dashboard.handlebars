@@ -74,7 +74,9 @@
     <tbody>
       {{#each organizations}}
         <tr>
-          <td>{{name}} </td>
+          {{!-- <td>{{name}} </td> --}}
+          <td><a href="/users/show/organizations/{{id}}">{{name}}</a></td>
+
            <td>{{#each members}}<a href="/users/show/{{id}}">{{ firstName}} {{lastName}};</a>{{/each}}</td>
         </tr>
       {{/each}}

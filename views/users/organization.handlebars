@@ -1,0 +1,27 @@
+<h4>Organization: {{organization.name}}</h4>
+<br>
+<h5>Members</h5>
+<table class="striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+{{#each organization.members}}
+        <tr>
+          <td><a href="/users/show/{{id}}">{{firstName}} {{lastName}}</a></td>
+        </tr>
+      {{/each}}
+
+    </tbody>
+  </table>
+<br>
+
+  <h5>Forecast Topics</h5>
+
+  
+
+
+

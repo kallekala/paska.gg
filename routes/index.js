@@ -67,7 +67,6 @@ router.post('/addOrg', ensureAuthenticated, (req, res) => {
         });
 })
 
-
 //dashboard
 router.get('/dashboard', ensureAuthenticated, (req, res) => {
         forecastTopic.find()

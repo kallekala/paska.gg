@@ -149,11 +149,29 @@ function fillOrgsMembers(orgs){
                                 }
                             }
                         }
-                    console.log(`funktion lopussa members: ${members}`)
-                    console.log(`funktion lopussa orgs: ${orgs}`)
                     resolve(orgs)        
                     })
-        } else {reject("no orgs")}
+        } else {
+            //if not array. used in show single organization
+            if(orgs) {
+                var members = [];
+                User.find({})
+                    .then((users)=>{
+                        orgs.members=[];
+                        for (i = 0; i<users.length; i++) {
+                            let length = users[i].memberOrganizations.length;
+                            for (j = 0; j<length; j++){
+                                var pekka = String(users[i].memberOrganizations[j]);
+                                var patka = String(orgs._id)
+                                if(pekka===patka){
+                                    orgs.members.push(users[i])
+                                    members.push(users[i])}
+                            }
+                        }
+                        resolve(orgs)
+                    })
+            } else {reject('no org')}
+        }
     });
 }
 
