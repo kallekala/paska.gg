@@ -86,7 +86,9 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
                     if(subArray.length>0){
                         for(j = 0; j<subArray.length; j++){
                             //converting to strings bc objects dont work in comparison
+
                             var nokka = String(req.user._id);
+
                             var pokka = String(subArray[j].user._id);
                                     if(nokka===pokka) {
                                         loggedUserTopics.push(i);
@@ -120,10 +122,12 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
                     //find user's orgs
                     filters.listOwnOrgs(req.user._id)
                         .then(ownOrgs=>{
-                        // fill user's org members
+
+                        // fill user's org members. tässä tulee ongelma _id kanssa
                             filters.fillOrgsMembers(ownOrgs)
                                 .then(orgs => {
-                                    console.log(`orgs: ${orgs}`)
+                                    console.log("tässä")
+
                                     res.render('index/dashboard',{
                                         forecastTopic:forecastTopic,
                                         organizations:orgs,

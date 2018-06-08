@@ -94,6 +94,9 @@ function listOwnOrgs(userId) {
             User.find({_id:userId})
             .then(user => {
             var ownOrgs = [];
+            console.log(`listin alussa: ${ownOrgs}`)
+            console.log(typeof ownOrgs)
+
             var userLength = user[0].memberOrganizations.length;
             var pituus = allOrgs.length;
                 for (i = 0; i<pituus; i++) {
@@ -128,31 +131,41 @@ function fillOrgsMembers(orgs){
         var members = [];
         if(orgs.length>0){
             var pituus = orgs.length;
-            for (i = 0; i<pituus; i++) {
-                orgs[i].members = [];
                 User.find({})
                     .then(users=> {
-                        var userPituus = users.length;
-                        for (j = 0; j<userPituus; j++){
-                            var userOrgsLength = users[j].memberOrganizations.length;
-                            if(userOrgsLength>0){
-                                for (h = 0; h<userOrgsLength; h++){
-                                    var paska = String(orgs[i]._id);
-                                    var housussa = String(users[j].memberOrganizations[h])
-                                    if(paska===housussa){
-                                        members.push(users[j])
+                        for (i = 0; i<pituus; i++) {
+                            orgs[i].members = [];
+
+                        console.log(`i eka: ${i}`)
+            
+                        console.log(`i toka: ${i}`)
+
+                            var userPituus = users.length;
+                            for (j = 0; j<userPituus; j++){
+                                var userOrgsLength = users[j].memberOrganizations.length;
+                                if(userOrgsLength>0){
+                                    console.log(`i kolmas: ${i}`)
+
+                                    for (h = 0; h<userOrgsLength; h++){
+
+                                        var paska = String(orgs[i]._id);
+                                        console.log("täälles")
+                                        console.log(`i neljäs: ${i}`)
+
+
+                                        var housussa = String(users[j].memberOrganizations[h])
+                                        if(paska===housussa){
+                                            members.push(users[j])
+                                        }
                                     }
                                 }
                             }
                         }
-                    orgs.members = members
+                            orgs.members = members
                     console.log(orgs)
                     resolve(orgs)        
                     })
-            }
-        } else {
-            reject("no orgs")
-        }
+        } else {reject("no orgs")}
     });
 }
 
