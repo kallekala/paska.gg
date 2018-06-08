@@ -16,36 +16,40 @@ const organization = mongoose.model('organizations');
 //load helpers for database filtering
 const filters = require('../helpers/filters.js')
 
-//forecast perussivu
+//active topics page
 router.get('/', ensureAuthenticated, (req, res) => {
     filters.getOrgs(req.user._id, res)
         .then((okTopics) => {
-                    var loggedUser = req.user._id;
-                    for (i = 0; i<okTopics.length; i++) {
-                        var loggedUserSubmits = [];
-                        var subArray = okTopics[i].submits;
-                        var tama = okTopics[i]
-                            if(subArray.length>0){
-                                for(j = 0; j<subArray.length; j++){
-                                    //laitan stringeiksi koska muuten type on jostain syystä objekti jolloin ei toimi ifissä
-                                    var nokka = String(req.user._id)
-                                    var pokka = String(subArray[j].user) 
-                                            if(nokka===pokka) {
-                                                loggedUserSubmits.push(subArray[j]);
-                                            } 
-                                }
-                            }
-                        tama.submits = loggedUserSubmits
-                    };
-            res.render('forecasts/forecastsIndex',{
-                forecastTopics:okTopics
-            })
+            //siirrä tämä filttereihin
+            var loggedUser = req.user._id;
+            for (i = 0; i<okTopics.length; i++) {
+                var loggedUserSubmits = [];
+                var subArray = okTopics[i].submits;
+                var tama = okTopics[i]
+                    if(subArray.length>0){
+                        for(j = 0; j<subArray.length; j++){
+                            //laitan stringeiksi koska muuten type on jostain syystä objekti jolloin ei toimi ifissä
+                            var nokka = String(req.user._id)
+                            var pokka = String(subArray[j].user) 
+                                    if(nokka===pokka) {
+                                        loggedUserSubmits.push(subArray[j]);
+                                    }
+                        }
+                    }
+                tama.submits = loggedUserSubmits
+                filters.shortenGuessArrays(okTopics)
+                    .then((okTopics)=>{
+                        res.render('forecasts/forecastsIndex',{
+                            forecastTopics:okTopics
+                        })
+                    })
+            }
         })
         .catch((errormsg) => {
             console.log(`errori: ${errormsg}`)
             res.render('forecasts/forecastsIndex')
         });
-    })
+})
 
 //page I for adding new topics
 router.get('/add', ensureAuthenticated, (req, res)=>{
@@ -84,7 +88,6 @@ router.post('/', ensureAuthenticated, (req, res) => {
             if(req.body.options4){
             forecastTopic[0].options.push(req.body.options4)
             }
-            console.log(forecastTopic[0].options)
             forecastTopic[0].save();
             req.flash('success_msg', `${forecastTopic[0].title} was created`);
             res.redirect('/forecasts')
@@ -192,13 +195,13 @@ router.put('/:id', ensureAuthenticated, (req, res) => {
         })
 });
 
-
 // Show Single forecast
 router.get('/show/:id', (req, res) => {
     forecastTopic.findOne({_id: req.params.id})
     .populate('user')
     .populate('comments.commentUser')
     .populate('submits.user')
+    .populate('organizations')
     .then(forecastTopic => {
         var omat = [];
         for (i = 0; i<forecastTopic.submits.length; i++) { 
@@ -214,25 +217,24 @@ router.get('/show/:id', (req, res) => {
     })
 });
 
-
 //submit guess
 router.put('/submitGuess/:id', ensureAuthenticated, (req, res) => {
 
     //lets try to make array of the guesses that we can then feed somewhere
     var guessArray = [];
 
-    if(req.body.submittedProbability0){guessArray[0] = req.body.submittedProbability0}
-    else {guessArray[0] = 0}
-    if(req.body.submittedProbability1){guessArray[1] = req.body.submittedProbability1}
-    else {guessArray[1] = 0}
-    if(req.body.submittedProbability2){guessArray[2] = req.body.submittedProbability2}
-    else {guessArray[2] = 0}
-    if(req.body.submittedProbability3){guessArray[3] = req.body.submittedProbability3}
-    else {guessArray[3] = 0}
-    if(req.body.submittedProbability4){guessArray[4] = req.body.submittedProbability4}
-    else {guessArray[4] = 0} 
-
-    console.log(`guessarray: ${guessArray}`)
+    //converting undefineds to zero
+    let a = req.body.submittedProbability0 || 0
+    let b = req.body.submittedProbability1 || 0
+    let c = req.body.submittedProbability2 || 0
+    let d = req.body.submittedProbability3 || 0
+    let e = req.body.submittedProbability4 || 0
+    
+    guessArray[0] = Number(a);
+    guessArray[1] = Number(b);
+    guessArray[2] = Number(c);
+    guessArray[3] = Number(d);
+    guessArray[4] = Number(e);
 
     const newGuess = {
         title: req.body.title,
@@ -244,22 +246,42 @@ router.put('/submitGuess/:id', ensureAuthenticated, (req, res) => {
 
     //error handling
     let errors = [];
-    if(req.body.submittedProbability<0 || req.body.submittedProbability>100) {
-        errors.push("Please enter a value between 0 and 100");
-    }
+
+    //number out of 0-100
+    if(a<0 || a>100) {
+        errors.push("Please enter values between 0 and 100");}
+    if(b<0 || b>100) {
+        errors.push("Please enter values between 0 and 100");}
+    if(c<0 || c>100) {
+        errors.push("Please enter values between 0 and 100");}
+    if(d<0 || d>100) {
+        errors.push("Please enter values between 0 and 100");}
+    if(e<0 || e>100) {
+        errors.push("Please enter values between 0 and 100");}
+
+//probabilities must sum to 100
+    var sum = 0;
+    for(i = 0; i<guessArray.length; i++){
+        console.log(typeof guessArray[i])
+       sum += guessArray[i]}
+
+    if(sum != 100){
+        console.log("ok")
+        errors.push(`The guesses must add to 100. Yours added to ${sum}`);}
+
     if(errors.length>0) {
         req.flash('error_msg', `Error: ${errors}`);
         res.redirect('/forecasts')
+    } else {
+        //if no errors, save the guesses to database
+        forecastTopic.findOne({title:req.body.title})
+            .then((forecastTopic) => {
+                forecastTopic.submits.unshift(newGuess);
+                forecastTopic.save()
+                    req.flash('success_msg', `Your guess for "${forecastTopic.title}" was updated`);
+                    res.redirect('/forecasts')
+                });
     }
-
-    //if no errors, save to forecastTopic document
-    forecastTopic.findOne({title:req.body.title})
-        .then((forecastTopic) => {
-            forecastTopic.submits.unshift(newGuess);
-            forecastTopic.save()
-                req.flash('success_msg', `Your guess for "${forecastTopic.title}" was updated`);
-                res.redirect('/forecasts')
-            });            
 });
 
 //submit status 
@@ -272,7 +294,6 @@ router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
             var status = req.body.status;
             topic.status = status;
             topic.save();
-
             filters.openOrClosed(topic, status)
                 .then((topic)=>{
                     var status = req.body.status;
@@ -301,7 +322,6 @@ router.put('/submitResult/:id', ensureAuthenticated, (req, res) => {
                 console.log("open or closed failas");
                 res.redirect('/forecasts')
                 });
-                
         })
 });
 

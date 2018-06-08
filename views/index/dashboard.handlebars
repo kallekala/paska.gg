@@ -8,19 +8,19 @@
   <table class="striped">
     <thead>
       <tr>
-        <th >User</th>
+        <th>User</th>
         <th>Number of Topics Participated</th>
         <th>Average Brier Score</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td>{{user.firstName}} {{user.lastName}}</td>
+          <td><a href="/users/show/{{user._id}}">{{user.firstName}} {{user.lastName}};</a></td>
           <td>{{forecastTopic.loggedUserTopics}}</td>
           <td>{{forecastTopic.ownAvg}}</td>
         </tr>
         <tr>
-          <td>Other Users</td>
+          <td>All Users</td>
           <td>{{forecastTopic.count}}</td>
           <td></td>
         </tr>
@@ -28,12 +28,13 @@
   </table>
 {{/if}}
 
-<h4>Your Results for Resolved Topics</h4>
+<h4>Your Activity by Topic</h4>
 {{#if forecastTopic}}
   <table class="striped">
     <thead>
       <tr>
         <th>Title</th>
+        <th>Answer Options</th>
         <th>Your Guess</th>
         <th>Result</th>
         <th>Your Brier Score</th>
@@ -44,8 +45,12 @@
         <tr>
             {{!-- poistan linkin toistaiseksi koska pitää olla erilainen sivu kun ratkaistu--}}
           <td><a href="/forecasts/show/{{id}}">{{title}}</a></td> 
-          {{!-- <td>{{title}}</td> --}}
-          <td>{{submits.0.submittedProbability}} %</td>
+          <td>{{options}}</td>
+          {{#if submits.0.submittedProbability}}
+            <td>{{submits.0.submittedProbability}} %</td>
+          {{else}}
+            <td>No Submit</td>
+          {{/if}}
           <td>{{status}}</td>
           <td>{{submits.0.brierScore}}</td>
           {{!-- <td>{{formatDate data 'MMMM do YYYY'}}</td> --}}
@@ -75,14 +80,15 @@
         <th>Members</th>
       </tr>
     </thead>
+    
     <tbody>
-
-{{#each organizations}}
+      {{#each organizations}}
+      {{this}}
         <tr>
           <td>{{name}} </td>
-          <td>{{#each members}} {{ firstName}} {{lastName}}; {{/each}}</td>
+           <td>{{#each members}}<a href="/users/show/{{id}}">{{ firstName}} {{lastName}};</a>{{/each}}</td>
         </tr>
-        {{/each}}
+      {{/each}}
 
     </tbody>
   </table>

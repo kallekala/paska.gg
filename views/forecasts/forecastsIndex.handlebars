@@ -1,6 +1,6 @@
 <br>
-<h4>Currently Open Topics</h4>
-<h6>These are the active forecast topics submitted by users</h6>
+<h4>Active Topics</h4>
+<h6>These are the active forecast topics submitted by users in your organizations</h6>
 
 
 {{!-- tän divin pitää mennä koko roskan yli jotta menee vierekkäin --}}
@@ -11,17 +11,19 @@
 {{#if forecastTopics}}
 {{#each forecastTopics}}
 
-{{!-- topicit --}}
 <div class="grid-item"
 <div class="col s3">
     <div class="card panel">
         <div class="card-content">
             <h5>{{title}}</h5>
             <p>{{details}}</p>
-<br>
-            {{!-- Your current guess for "Yes": {{submits.0.submittedProbability}} % --}}
+            <br>
+            {{#if open}}
+            <p>Options: {{options}}</p><br>
+            {{/if}}
+            Your current guess: {{submits.0.submittedProbability}} %<br><br>
+            <p>Status: {{status}}</p>
 
-            <br><br>
 
 {{!-- new guess --}}
                         {{!-- <form action="/forecasts/submitGuess/{{id}}?_method=PUT" method="post">
@@ -40,7 +42,8 @@
         </div>
     </div>
 {{/each}}
- 
+ <br>
+
     {{else}}
 <p>No Active Topics</p>
 </div>
@@ -48,4 +51,6 @@
 </div>
 <br>
     {{/if}}
+
+
 

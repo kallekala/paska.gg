@@ -38,7 +38,9 @@ const UserSchema = new Schema ({
     memberOrganizations:[{
         type: Schema.Types.ObjectId,
         ref:'organizations',
-}],
+    }],
+
+
 
     admin:{
         type: Boolean,

@@ -12,11 +12,6 @@ const organizationSchema = new Schema ({
         type: String,
     },
 
-    members:[{
-        type: Schema.Types.ObjectId,
-        ref:'users'
-    }],
-
 });
 
 //luo model. eka argumentti toimii myös collectionin nimenä mihin tulee menemään

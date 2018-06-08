@@ -9,7 +9,7 @@
         <li><a href="/forecasts">Welcome {{user.firstName}}</a></li>
         <li><a href="/auth/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
         {{else}}
-        <li><a href="/forecasts"><i class="fa fa-fire"></i> Public Topics</a></li>
+        <li><a href="/forecasts"><i class="fa fa-fire"></i> Active Topics</a></li>
         {{/if}}
       </ul>
       
@@ -25,7 +25,7 @@
         {{#if user}}
 
         <li><a href="/dashboard"><i class="fa fa-crosshairs"></i>Dashboard</a></li>
-        <li><a href="/statistics"><i class="fa fa-line-chart"></i>Statistics</a></li>
+        {{!-- <li><a href="/statistics"><i class="fa fa-line-chart"></i>Statistics</a></li> --}}
         <li><a href="/forecasts/add"><i class="fa fa-plus"></i> Add New Topic</a></li>
                 {{!-- <li><a href="/forecasts/my"><i class="fa fa-user"></i> My Forecasts</a></li> --}}
         <li><a href="/auth/logout"><i class="fa fa-sign-out"></i> Logout</a></li>

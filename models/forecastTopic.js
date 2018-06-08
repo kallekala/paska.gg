@@ -76,6 +76,8 @@ const forecastTopicSchema = new Schema ({
 
     organizations: [
         {type: String,
+        type: Schema.Types.ObjectId,
+        ref:'organizations'
         }
     ],
 

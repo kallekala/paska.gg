@@ -18,26 +18,12 @@ const organization = mongoose.model('organizations');
 
 //welcome page
 router.get('/', (req, res) => { 
-    if(req.user!==undefined){
-        filters.getOrgs(req.user._id, res)
-            .then((okTopics) => {
-                res.render('index/welcome',{
-                    topics:okTopics
-                })
-            })
-            .catch(()=> {res.render('index/welcome')
-            });
-    } 
-    else {
-        console.log("ei rekannut")
-        res.render('index/welcome')
-    };
+           res.render('index/welcome')
 });
-
+    
 //admin page
 router.get('/admin', (req, res) => {
     //i put this workaround authentication. should improve with req.user
-    console.log(req.user.admin)
     if(req.user.admin){
         User.find()
             .then(users => {
@@ -88,7 +74,6 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
         .populate('submits.user')
         .sort({date:'desc'})
         .then((forecastTopic) => {
-            console.log(`findin läpi meni: ${forecastTopic.length}`);
             var loggedUser = req.user._id;
             var loggedUserLatestBriers =[];
             var loggedUserTopics = [];
@@ -102,7 +87,6 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
                         for(j = 0; j<subArray.length; j++){
                             //converting to strings bc objects dont work in comparison
                             var nokka = String(req.user._id);
-
                             var pokka = String(subArray[j].user._id);
                                     if(nokka===pokka) {
                                         loggedUserTopics.push(i);
@@ -110,7 +94,6 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
                                     } 
                         }
                         tama.submits = loggedUserSubmits;
-                        console.log("loopin lopussa")
                         if(loggedUserSubmits[0]){
                             if(loggedUserSubmits[0].brierScore!="Unresolved") {loggedUserLatestBriers.push(parseFloat(loggedUserSubmits[0].brierScore))};
                             }
@@ -124,30 +107,37 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
             }
 
             forecastTopic.loggedUserTopics=countUnique(loggedUserTopics);
-            console.log("ennen brieriä")
 
             //find logged users brier score avg
             if(loggedUserLatestBriers.length>0){
             var ownSum = loggedUserLatestBriers.reduce( (accumulator, currentValue) => accumulator + currentValue );
             forecastTopic.ownAvg = Math.round((ownSum/loggedUserLatestBriers.length*100))/100;
-            console.log("töökkö")
         }
 
-        console.log("ennen orgsien kaivamista")
-
-            //find user's orgs
-            filters.listOwnOrgs(req.user._id).then(ownOrgs=>{
-                // fill user's org members
-                filters.fillOrgsMembers(ownOrgs)
-                    .then(orgs => {
-                        res.render('index/dashboard',{
-                            forecastTopic:forecastTopic,
-                            organizations:orgs,
-                        });
-                    })
-            }).catch(()=> {
-                console.log("vituiksi")
-                res.render('index/welcome',);
+            //shorten guessarrays
+            filters.shortenGuessArrays(forecastTopic)
+                .then((forecastTopic)=> {
+                    //find user's orgs
+                    filters.listOwnOrgs(req.user._id)
+                        .then(ownOrgs=>{
+                        // fill user's org members
+                            filters.fillOrgsMembers(ownOrgs)
+                                .then(orgs => {
+                                    console.log(`orgs: ${orgs}`)
+                                    res.render('index/dashboard',{
+                                        forecastTopic:forecastTopic,
+                                        organizations:orgs,
+                                    });
+                                })
+                        })
+                        .catch(()=> {
+                            console.log("vituiksi")
+                            res.render('index/welcome',);
+                            })
+                .catch((err)=>{
+                    console.log(`error from shortening the guessarrays: ${err}`)
+                    res.render('index/welcome',);
+            })
             })
         })
 });
@@ -156,5 +146,11 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
 router.get('/statistics', (req, res) => {
     res.render('index/statistics');
 });
+
+//about page
+router.get('/about', (req, res) => {
+    res.render('index/about');
+});
+
 
 module.exports = router;

@@ -1,1 +1,88 @@
-kukkuu
+
+{{#if user}}
+<h4>User: {{user.firstName}} {{user.lastName}}</h4>
+  <table class="striped">
+    <thead>
+      <tr>
+        <th >User</th>
+        <th>Number of Topics Participated</th>
+        <th>Average Brier Score</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>{{user.firstName}} {{user.lastName}}</td>
+          <td>{{forecastTopic.loggedUserTopics}}</td>
+          <td>{{forecastTopic.ownAvg}}</td>
+        </tr>
+    </tbody>
+  </table>
+
+
+{{#each userTopics}}
+
+{{this}}
+
+{{/each}}
+
+{{#if userTopics}}
+<h5>Activity by Topic:</h5>
+
+  <table class="striped">
+    <thead>
+      <tr>
+        <th>Topic</th>
+        <th>User's Current Guess</th>
+        <th>Status</th>
+        <th>Brier Score</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {{#each userTopics}}
+        <tr>
+          <td>{{title}}</td>
+          <td>{{submits.0.submittedProbability}} %</td>
+          <td>{{status}}</td>
+          <td>{{submits.0.brierScore}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+  </table>
+
+{{/if }}
+
+
+
+<br>
+{{#if user.memberOrganizations}}
+<h5>The User is member in the following organizations:</h5>
+  <table class="striped">
+
+    <thead>
+      <tr>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+
+{{#each user.memberOrganizations}}
+        <tr>
+          <td>{{name}} </td>
+        </tr>
+        {{/each}}
+
+    </tbody>
+  </table>
+
+{{/if}}
+
+
+{{else}}
+
+<p>No user to show</p>
+
+{{/if}}
+
+
+

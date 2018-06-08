@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const {ensureAuthenticated, ensureGuest} = require('../helpers/auth');
 
-
 module.exports = router;
 
 // load models
@@ -16,18 +15,14 @@ const User = mongoose.model('users');
 require('../models/organization');
 const organization = mongoose.model('organizations');
 
+//load helpers for database filtering
+const filters = require('../helpers/filters.js')
 
-// // user login route
-// router.get('/login', (req, res)=> {
-//     res.render("users/login")
-// });
 
 // user register route
 router.get('/register', (req, res)=> {
     res.render("./users/register")
 });
-
-
 
 // Login Form POST
 router.post('/login', (req, res, next) => {
@@ -41,33 +36,28 @@ router.post('/login', (req, res, next) => {
 //show user
 router.get('/show/:id', (req, res) => {
     User.findOne({
-      _id: req.body.id
+      _id: req.params.id
     })
-    //jatka tästä
-//     .populate('memberOrganizations')
+    .populate('memberOrganizations')
+    .populate('submits')
     .then(user => {
-//         var omat = [];
-//         for (i = 0; i<forecastTopic.submits.length; i++) { 
-//             if(forecastTopic.submits[i].user._id==req.user.id) {
-//                 omat.push(forecastTopic.submits[i]);
-
-//             }
-//         }
-//         forecastTopic.submits = omat;
-
-        res.render('users/show', {
-            user:user,
-        });
+        filters.filterTopicsByUserSubmits(user._id)
+            .then((userTopics)=>{
+                res.render('users/show', {
+                    user:user,
+                    userTopics:userTopics
+                });
+            })
+            .catch((err)=>{console.log("catchiin")
+                res.render('/welcome');
+            })
     })
 });
-
-
 
 
 // add user to organization 
 router.put('/modify', ensureAuthenticated, (req, res) => {
     let errors = [];
-    console.log(req.body)
     if(!req.body.selectedUser){
         errors.push("Select User")
     }
@@ -83,7 +73,6 @@ router.put('/modify', ensureAuthenticated, (req, res) => {
         _id: req.body.selectedUser
         })
         .then(user => {
-            console.log(user.memberOrganizations[0])
             let errors = [];
                 for (i = 0; i < user.memberOrganizations.length; i++)
                 if(user.memberOrganizations[i]==req.body.selectedOrganization){
