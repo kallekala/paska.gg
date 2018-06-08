@@ -122,11 +122,8 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
                     filters.listOwnOrgs(req.user._id)
                         .then(ownOrgs=>{
 
-                        // fill user's org members. tässä tulee ongelma _id kanssa
                             filters.fillOrgsMembers(ownOrgs)
                                 .then(orgs => {
-                                    console.log("tässä")
-                                    console.log(`orgs ennnen: ${orgs}`)
                                     res.render('index/dashboard',{
                                         forecastTopic:forecastTopic,
                                         organizations:orgs,

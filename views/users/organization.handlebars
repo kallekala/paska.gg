@@ -20,8 +20,26 @@
 <br>
 
   <h5>Forecast Topics</h5>
+<table class="striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>options</th>
+        
+        <th>Status</th>
 
-  
+      </tr>
+    </thead>
+    
+    <tbody>
+{{#each topics}}
+        <tr>
+          <td><a href="/forecasts/show/{{id}}">{{title}}</a></td>
+          <td>{{options}}</td>
 
+          <td>{{status}}</td>
+        </tr>
+      {{/each}}
 
-
+    </tbody>
+  </table>

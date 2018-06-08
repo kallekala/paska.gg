@@ -95,16 +95,19 @@ router.put('/modify', ensureAuthenticated, (req, res) => {
 
     //show organization
 router.get('/show/organizations/:id', (req, res) => {
-
     organization.findOne({
       _id: req.params.id
     })
         .then((organization)=>{
             filters.fillOrgsMembers(organization)
                 .then((organization) => {
-                    res.render('users/organization', {
-                        organization:organization,
-                    });
+                    filters.getTopicsForOrgs(organization)
+                        .then((filteredTopics)=>{
+                            res.render('users/organization', {
+                                organization:organization,
+                                topics:filteredTopics
+                            });
+                        })
                 })
         })
 });

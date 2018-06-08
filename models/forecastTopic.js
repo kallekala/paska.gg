@@ -81,10 +81,6 @@ const forecastTopicSchema = new Schema ({
         }
     ],
 
-    visible: {
-        type:Boolean,
-        default: false
-    },
 
     }, { versionKey: false });
 

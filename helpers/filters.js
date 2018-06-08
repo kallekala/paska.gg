@@ -32,9 +32,6 @@ function filterTopicsByUserSubmits(userId) {
                             var kyrpa = String(userId);
                             var naama = String(topics[i].submits[j].user)
                             if(kyrpa!=naama){
-                                console.log("tässä")
-                                console.log(kyrpa)
-                                console.log(naama)
                                 topics[i].submits.splice(j,1)
                             }
                         }
@@ -45,6 +42,27 @@ function filterTopicsByUserSubmits(userId) {
             })
     })
 }
+
+//submit topics by org id
+function getTopicsForOrgs(org) {
+    return new Promise((resolve, reject) => {
+        forecastTopic.find({})
+            .then((topics)=>{
+                var filteredTopics = [];
+                for (i = 0; i<topics.length; i++) {
+                    for (j = 0; j<topics[i].organizations.length; j++) {
+                        let kapa = String(topics[i].organizations[j])
+                        let kala = String(org._id)
+                        if(kapa===kala){
+                            filteredTopics.push(topics[i])
+                        }
+                    }
+                }
+                resolve(filteredTopics);
+            })
+    })
+}
+
 
 //only show topics that are in user's orgs
 function getOrgs(userId) {
@@ -58,7 +76,6 @@ function getOrgs(userId) {
                     .populate('organizations')
                     .populate('user')
                     .then(topics => {
-                        // console.log(`tässä: ${topics}`)
                         if(topics.length>0){
                         for (i = 0; i<topics.length; i++) {
                             if(topics[i].organizations.length>0){
@@ -67,7 +84,6 @@ function getOrgs(userId) {
                                         var runk = String(topics[i].organizations[j]._id)
                                         var kari = String(memberOrganizations[l])
                                         if(runk==kari){
-                                            topics[i].visible=true
                                             okTopics.push(topics[i])
                                         }
                                     }
@@ -94,8 +110,6 @@ function listOwnOrgs(userId) {
             User.find({_id:userId})
             .then(user => {
             var ownOrgs = [];
-            console.log(`listin alussa: ${ownOrgs}`)
-            console.log(typeof ownOrgs)
 
             var userLength = user[0].memberOrganizations.length;
             var pituus = allOrgs.length;
@@ -178,10 +192,7 @@ function fillOrgsMembers(orgs){
 //shortens guess array. complicated way. hbs helper might make more sense
 function shortenGuessArrays(topics){
     return new Promise((resolve, reject) => {
-        console.log(`topicssit ulos : ${topics}`)
-        console.log(`topicssit ulos 0: ${topics[0]}`)
         if(topics.length>0){
-            console.log("tässä")
             let pituus = topics.length;
             for (i = 0; i<pituus; i++) {
                 var nOfOptions = topics[i].options.length;
@@ -195,14 +206,11 @@ function shortenGuessArrays(topics){
                     }
                 }
             }
-            console.log("ennen resolvea")
             resolve(topics)
         } else {
             //if not array. used in show single forecast
             if(topics) {
-                console.log("here")
                 var pituus3 = topics.submits.length;
-                console.log(`pituus3: ${pituus3}`)
                 for (k = 0; k<pituus3; k++) {
                     var nOfOptions = topics.options.length;
                     let difference = 5-nOfOptions
@@ -310,5 +318,7 @@ module.exports.shortenGuessArrays = shortenGuessArrays;
 module.exports.setResult = setResult;
 module.exports.openOrClosed = openOrClosed;
 module.exports.calculateBriers = calculateBriers;
-module.exports.filterTopicsByUserSubmits = filterTopicsByUserSubmits;
+module.exports.getTopicsForOrgs = getTopicsForOrgs;
+
+
 

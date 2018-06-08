@@ -158,13 +158,8 @@
 
         </form>
         </div>
-
-        </div>
-      </div>
-
-<br>
-
-<h5>Guesses</h5>
+<h5>Guesses for closed topics</h5>
+{{#if open}}
   <table class="striped">
     <thead>
       <tr>
@@ -195,6 +190,18 @@
 
     </tbody>
   </table>
+
+{{else}}
+
+<p>Guesses will be revealed here once the topic is closed</p>
+
+  {{/if}}
+
+        </div>
+      </div>
+
+<br>
+
 
 
 

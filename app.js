@@ -121,28 +121,3 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
-
-
-
-
-//promise esimerkki
-// function doSomething() {
-//     return new Promise((resolve, reject) => {
-//         if (Math.random()>0.5) {
-//             resolve("kivaa")
-//         } else {
-//             reject("paskaa")
-//         }
-//     }
-//     )
-// };
-
-// function successCallback(message){
-//     console.log(message)
-// };
-
-// function failureCallback(message){
-//     console.log(message)
-// };
-
-// doSomething().then(successCallback, failureCallback);

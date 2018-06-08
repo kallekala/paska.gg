@@ -261,11 +261,9 @@ router.put('/submitGuess/:id', ensureAuthenticated, (req, res) => {
 //probabilities must sum to 100
     var sum = 0;
     for(i = 0; i<guessArray.length; i++){
-        console.log(typeof guessArray[i])
        sum += guessArray[i]}
 
     if(sum != 100){
-        console.log("ok")
         errors.push(`The guesses must add to 100. Yours added to ${sum}`);}
 
     if(errors.length>0) {
@@ -351,15 +349,6 @@ router.post('/comment/:id', (req, res) => {
       forecastTopic.remove({_id: req.params.id})
         .then(() => {
             req.flash('success_msg', 'Topic deleted');
-            res.redirect('/forecasts');            
-        });
-});
-
-  //delete forecastTopic alternate that was in users-route
-  router.delete('/:id', (req, res) => {
-    forecastTopic.remove({_id: req.params.id})
-        .then(() => {
-            req.flash('success_msg', 'Topic removed');
             res.redirect('/forecasts');            
         });
 });
