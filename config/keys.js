@@ -10,7 +10,7 @@
 //     module.exports = {mongoURI: 'mongodb://localhost/fc3-dev'}
 // }
 
-process.env.NODE_ENV = "development"
+process.env.NODE_ENV = "production"
 
 
 if(process.env.NODE_ENV === 'production'){
