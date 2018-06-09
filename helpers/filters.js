@@ -319,6 +319,8 @@ module.exports.setResult = setResult;
 module.exports.openOrClosed = openOrClosed;
 module.exports.calculateBriers = calculateBriers;
 module.exports.getTopicsForOrgs = getTopicsForOrgs;
+module.exports.filterTopicsByUserSubmits = filterTopicsByUserSubmits;
+
 
 
 

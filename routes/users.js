@@ -90,8 +90,7 @@ router.put('/modify', ensureAuthenticated, (req, res) => {
                 }   
         });
     };
-    });
-
+ });
 
     //show organization
 router.get('/show/organizations/:id', (req, res) => {
