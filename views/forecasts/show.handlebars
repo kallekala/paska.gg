@@ -9,8 +9,8 @@
         <span class="card-title">Created: {{formatDate forecastTopic.date 'MMMM Do YYYY'}}</span>
         <span class="card-title">Status: {{forecastTopic.status}}</span>
         <p>{{forecastTopic.details}}</p>
-        <p>Organizations: {{#each forecastTopic.organizations}}{{name}}; {{/each}}</p>
-
+        <br>
+        <p>Organizations: {{#each forecastTopic.organizations}}<a href="/users/show/organizations/{{id}}">{{name}};</a>{{/each}}</p>
       </div>
     </div>
 
