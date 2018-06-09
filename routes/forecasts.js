@@ -74,19 +74,19 @@ router.post('/', ensureAuthenticated, (req, res) => {
         .then(forecastTopic => {
             forecastTopic[0].options = [];
             if(req.body.options0){
-            forecastTopic[0].options.push(req.body.options0)
+            forecastTopic[0].options.push(`${req.body.options0}`)
             }
             if(req.body.options1){
-            forecastTopic[0].options.push(req.body.options1)
+            forecastTopic[0].options.push(` ${req.body.options1}`)
             }
             if(req.body.options2){
-            forecastTopic[0].options.push(req.body.options2)
+            forecastTopic[0].options.push(` ${req.body.options2}`)
             }
             if(req.body.options3){
-            forecastTopic[0].options.push(req.body.options3)
+            forecastTopic[0].options.push(` ${req.body.options3}`)
             }
             if(req.body.options4){
-            forecastTopic[0].options.push(req.body.options4)
+            forecastTopic[0].options.push(` ${req.body.options4}`)
             }
             forecastTopic[0].save();
             req.flash('success_msg', `${forecastTopic[0].title} was created`);

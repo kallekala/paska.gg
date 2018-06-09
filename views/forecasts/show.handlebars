@@ -10,7 +10,7 @@
         <span class="card-title">Status: {{forecastTopic.status}}</span>
         <p>{{forecastTopic.details}}</p>
         <br>
-        <p>Organizations: {{#each forecastTopic.organizations}}<a href="/users/show/organizations/{{id}}">{{name}};</a>{{/each}}</p>
+        <p>Organizations: {{#each forecastTopic.organizations}}<a href="/users/show/organizations/{{id}}">{{name}}; </a>{{/each}}</p>
       </div>
     </div>
 
@@ -29,35 +29,35 @@
         <p>You can modify your guess as often as you want until the topic is closed</p>
         <br>     
       {{#if forecastTopic.options.[0]}}
-        <p> option 1: {{forecastTopic.options.[0]}}</p>
+        <p> option 0: {{forecastTopic.options.[0]}}</p>
         <div class="input-field">
           <input class="materialize-textarea" type="text" name="submittedProbability0">
           <label for="title">To modify your guess insert 0-100</label>
         </div>
       {{/if}}
       {{#if forecastTopic.options.[1]}}
-        <p> option 2: {{forecastTopic.options.[1]}}</p>
+        <p> option 1: {{forecastTopic.options.[1]}}</p>
         <div class="input-field">
           <input class="materialize-textarea" type="text" name="submittedProbability1">
           <label for="title">To modify your guess insert 0-100</label>
         </div>
       {{/if}}
       {{#if forecastTopic.options.[2]}}
-        <p> option 3: {{forecastTopic.options.[2]}}</p>
+        <p> option 2: {{forecastTopic.options.[2]}}</p>
         <div class="input-field">
           <input class="materialize-textarea" type="text" name="submittedProbability2">
           <label for="title">To modify your guess insert 0-100</label>
         </div>
       {{/if}}
       {{#if forecastTopic.options.[3]}}
-        <p> option 4: {{forecastTopic.options.[3]}}</p>
+        <p> option 3: {{forecastTopic.options.[3]}}</p>
         <div class="input-field">
           <input class="materialize-textarea" type="text" name="submittedProbability3">
           <label for="title">To modify your guess insert 0-100</label>
         </div>
       {{/if}}
       {{#if forecastTopic.options.[4]}}
-        <p> option 5: {{forecastTopic.options.[4]}}</p>
+        <p> option 4: {{forecastTopic.options.[4]}}</p>
         <div class="input-field">
           <input class="materialize-textarea" type="text" name="submittedProbability4">
           <label for="title">To modify your guess insert 0-100</label>
@@ -160,6 +160,9 @@
         </div>
 <h5>Guesses for closed topics</h5>
 {{#if open}}
+<p>Guesses will be revealed here once the topic is closed</p>
+
+{{else}}
   <table class="striped">
     <thead>
       <tr>
@@ -191,9 +194,6 @@
     </tbody>
   </table>
 
-{{else}}
-
-<p>Guesses will be revealed here once the topic is closed</p>
 
   {{/if}}
 
