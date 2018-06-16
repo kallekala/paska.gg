@@ -18,37 +18,25 @@ const filters = require('../helpers/filters.js')
 
 //active topics page
 router.get('/', ensureAuthenticated, (req, res) => {
-    filters.getOrgs(req.user._id, res)
-        .then((okTopics) => {
-            //siirrä tämä filttereihin
-            var loggedUser = req.user._id;
-            for (i = 0; i<okTopics.length; i++) {
-                var loggedUserSubmits = [];
-                var subArray = okTopics[i].submits;
-                var tama = okTopics[i]
-                    if(subArray.length>0){
-                        for(j = 0; j<subArray.length; j++){
-                            //laitan stringeiksi koska muuten type on jostain syystä objekti jolloin ei toimi ifissä
-                            var nokka = String(req.user._id)
-                            var pokka = String(subArray[j].user) 
-                                    if(nokka===pokka) {
-                                        loggedUserSubmits.push(subArray[j]);
-                                    }
-                        }
-                    }
-                tama.submits = loggedUserSubmits
-                filters.shortenGuessArrays(okTopics)
+    console.log("mennään")
+    filters.filterTopicsByUserSubmits(req.user._id, res)
+        .then((userTopics) => {filters.getOrgs(req.user._id, userTopics)
+            .then((userTopics)=> {
+                console.log("tässä ritari ässä")
+                console.log(userTopics)
+                filters.shortenGuessArrays(userTopics)
                     .then((okTopics)=>{
+                        console.log("okka")
                         res.render('forecasts/forecastsIndex',{
                             forecastTopics:okTopics
                         })
                     })
-            }
+            })
+            .catch((errormsg) => {
+                console.log(`errori: ${errormsg}`)
+                res.render('forecasts/forecastsIndex')
+            });
         })
-        .catch((errormsg) => {
-            console.log(`errori: ${errormsg}`)
-            res.render('forecasts/forecastsIndex')
-        });
 })
 
 //page I for adding new topics

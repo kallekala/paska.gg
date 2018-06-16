@@ -20,25 +20,36 @@ const User = mongoose.model('users');
 require('../models/organization');
 const organization = mongoose.model('organizations');
 
+
 //filter all topics that have submit from user. remove submits from other users
 function filterTopicsByUserSubmits(userId) {
     return new Promise((resolve, reject) => {
         forecastTopic.find({})
+            .populate('organizations')
             .then((topics)=>{
                 var userTopics = [];
+
                 for (i = 0; i<topics.length; i++) {
+
                     if(topics[i].submits.length>0){
+
                         for (j = 0; j<topics[i].submits.length; j++) {
+                            console.log("iiidd")
                             var kyrpa = String(userId);
                             var naama = String(topics[i].submits[j].user)
+                            console.log(`id: ${topics[i].submits[j].user}`)
+                            console.log(naama)
                             if(kyrpa!=naama){
+                                console.log("meni tännä")
                                 topics[i].submits.splice(j,1)
+
+
                             }
                         }
                     }
                     userTopics.push(topics[i])
                 }
-            resolve(userTopics)
+                resolve(userTopics)
             })
     })
 }
@@ -65,8 +76,48 @@ function getTopicsForOrgs(org) {
 
 
 //only show topics that are in user's orgs
-function getOrgs(userId) {
+function getOrgs(userId, topics) {
         return new Promise((resolve, reject) => {
+        //if topics, use them
+        if(topics){
+            console.log("on topicsit")
+            User.findOne({_id:userId})
+            .populate('submits.user')
+            .populate('memberOrganizations')
+            .then(user => {
+                let okTopics =[];
+                var memberOrganizations=user.memberOrganizations
+                        if(topics.length>0){
+                        for (i = 0; i<topics.length; i++) {
+                            if(topics[i].organizations.length>0){
+                                for (j = 0; j<topics[i].organizations.length; j++) {
+                                    for (l = 0; l<memberOrganizations.length; l++) {
+                                        var runk = String(topics[i].organizations[j]._id)
+                                        var kari = String(memberOrganizations[l]._id)
+                                        console.log(`runk: ${runk}`)
+                                        console.log(`kari: ${kari}`)
+                                        if(runk==kari){
+                                            okTopics.push(topics[i])
+                                            console.log("pushissa")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                            if(okTopics){
+                                console.log("jee")
+                                console.log(`lopussa: ${okTopics}`)
+
+                                resolve(okTopics)
+                            } else {
+                                reject("ei löytynyt useriin matchaavaa")
+                            }     
+                        }
+                        else {reject("topics.length on 0")}
+            })
+        }
+        else {
+            console.log("kukkuu")
         User.findOne({_id:userId})
             .populate('submits.user')
             .then(user => {
@@ -91,6 +142,7 @@ function getOrgs(userId) {
                             }
                         }
                             if(okTopics.length>0){
+                                console.log("huona")
                                 resolve(okTopics)
                             } else {
                                 reject("ei löytynyt useriin matchaavaa")
@@ -100,6 +152,7 @@ function getOrgs(userId) {
                     })       
             })
         }
+    }
     )};
 
 //get list of user's orgs
